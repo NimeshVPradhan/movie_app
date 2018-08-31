@@ -1,0 +1,30 @@
+.react-paginate ul {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.react-paginate li {
+    display: inline-block;
+    background: #666;
+    margin-left: 5px;
+    margin-right: 5px;
+    font-weight: bold;
+    font-style: normal;
+    color: black;
+    border: solid 2px;
+    border-color: white;
+    border-radius: 5px;
+}
+
+.react-paginate .break a {
+    cursor: default;
+    background: white;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  grid-row-gap: 20px;
+  grid-column-gap: 20px
+}

@@ -1,0 +1,9 @@
+https://api.themoviedb.org/3/movie/550?api_key=24786ae86c770b971c0c4549de40dea7
+
+
+read access token v4-
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNDc4NmFlODZjNzcwYjk3MWMwYzQ1NDlkZTQwZGVhNyIsInN1YiI6IjViODQyZWZmYzNhMzY4NjU1YjA0Mjk0YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.he348kvG3_TNiK92j1vfJei4Dk2r3hakSiDJdw7a8xU
+
+
+popular movies api:
+https://api.themoviedb.org/3/movie/popular?api_key=24786ae86c770b971c0c4549de40dea7&page=1
