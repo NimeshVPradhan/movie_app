@@ -5,16 +5,15 @@ const DB_NAME = 'movie_app';
 
 var users;
 
-const DB_ops = (client)=> {
+function DB_ops(client) {
   this.client = client;
   users = client.db().collection(DB_NAME);
 }
 
-
 DB_ops.prototype.newUser = (username, pw) => {
   const details = { _id: username,
                     pw: pw,
-                    favourites:[]}
+                    favorites:[]}
   return users.insertOne(details)
     .then((user)=>{
       return new Promise((resolve, reject) => {
@@ -31,15 +30,15 @@ DB_ops.prototype.loginUser = (username, pw) => {
   return users.find(details).toArray()
     .then((user)=>{
       return new Promise((resolve, reject) => {
-        resolve(user);
+        resolve(user[0]);
       })
     }).catch((err) => {
       return new Error(err);
     })
 }
 
-DB_ops.prototype.updateUser = (username, favourites) => {
-  return users.updateOne({_id:username}, {$set:{favourites: favourites}})
+DB_ops.prototype.updateUser = (username, favorites) => {
+  return users.updateOne({_id:username}, {$set:{favorites: favorites}})
     .then((user)=>{
       return new Promise((resolve, reject) => {
         resolve(user.matchedCount);
@@ -49,7 +48,7 @@ DB_ops.prototype.updateUser = (username, favourites) => {
     })
 }
 
-DB_ops.prototype.getUserFavourites = (username) => {
+DB_ops.prototype.getUserfavorites = (username) => {
   const details = {_id:username};
   return users.find(details).toArray()
     .then(user => {

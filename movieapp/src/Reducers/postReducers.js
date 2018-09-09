@@ -1,32 +1,30 @@
-import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES} from '../Actions/types.js';
+import {GET_POPULAR_MOVIES_GUEST, UPDATE_FAVOURITE_MOVIES_GUEST, GET_FAVOURITE_MOVIES_GUEST} from '../Actions/types.js';
 
 const initialState = {
   movies: [],
   currentPage: 1,
-  favourites: [],
+  favorites: [],
   preference: 'popular'
 }
 
 export default function(state= initialState, action){
   switch (action.type) {
-    case GET_POPULAR_MOVIES:
+    case GET_POPULAR_MOVIES_GUEST:
       return{
         ...state,
         movies: action.payload,
         currentPage: action.currentPage,
         preference: action.preference
       }
-      break;
-    case UPDATE_FAVOURITE_MOVIES:
+    case UPDATE_FAVOURITE_MOVIES_GUEST:
       return{
         ...state,
-        favourites: action.payload
+        favorites: action.payload
       }
-      break;
-    case GET_FAVOURITE_MOVIES:
+    case GET_FAVOURITE_MOVIES_GUEST:
     return{
       ...state,
-      favourites: action.payload
+      favorites: action.payload
     }
     default:
       return state;

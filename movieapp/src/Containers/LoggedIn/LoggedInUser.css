@@ -6,14 +6,14 @@
 
 .react-paginate li {
     display: inline-block;
-    background: #666;
+    background: white;
     margin-left: 5px;
     margin-right: 5px;
     font-weight: bold;
     font-style: normal;
     color: black;
-    border: solid 2px;
-    border-color: white;
+    border: solid 1px;
+    border-color: blue;
     border-radius: 5px;
 }
 
@@ -27,4 +27,8 @@
   grid-template-columns: auto auto auto auto;
   grid-row-gap: 20px;
   grid-column-gap: 20px
+}
+
+.inactive {
+  display: none;
 }

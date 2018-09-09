@@ -7,14 +7,25 @@ import MovieCard from '../../Components/MovieCard/MovieCard.js';
 
 import {Link } from 'react-router-dom';
 
-import {connect} from 'react-redux';
-import {getPopularMovies, handleFavourite, getFavouriteMovies} from '../../Actions/postActions.js';
+//import {connect} from 'react-redux';
+import {getPopularMovies, handleFavourite} from '../../Actions/postActions.js';
 
 class MovieCards extends Component{
+  constructor(){
+    super();
+    this.state = {
+      movies: [],
+      favorites: [],
+      currentPage: 1,
+      preference: 'popular'
+    }
 
-  componentWillMount(){
-    this.props.getPopularMovies('popular',1);
-    this.props.getFavouriteMovies();
+  }
+
+  async componentDidMount(){
+    console.log('mount');
+    console.log(getPopularMovies(this.state.preference,this.state.currentPage));
+    //this.props.getFavouriteMovies();
   }
 
   handlePageClick = (data) => {
@@ -22,7 +33,7 @@ class MovieCards extends Component{
   }
 
   handleFavourite = (movie) => {
-    this.props.handleFavourite(movie, this.props.favourites);
+    this.props.handleFavourite(movie);
   }
 
   handlePreference = (e) => {
@@ -31,8 +42,9 @@ class MovieCards extends Component{
 
   render(){
     const movies = this.props.movies;
-    const r = movies? movies.map((movie, index)=>
-      <MovieCard key={index} movie={movie} handleFavourite={this.handleFavourite} favourite={this.props.favourites.indexOf(movie.id)>=0}/>
+  //  console.log(movies);
+    const r = movies.length!=0? movies.map((movie, index)=>
+      <MovieCard key={movie.id} movie={movie} handleFavourite={this.handleFavourite} favourite={this.props.favorites.indexOf(movie.id)>=0}/>
     ): 'loading';
 
     return (
@@ -40,6 +52,10 @@ class MovieCards extends Component{
       <Link path='/' exact="true" to={{
             pathname: '/login'
           }}> Login </Link>
+          <Link path='/' exact="true" to={{
+                pathname: '/register'
+              }}> Register </Link>
+
           <br/>
       <select onChange={this.handlePreference} >
           <option value='popular' >Most popular</option>
@@ -61,19 +77,14 @@ class MovieCards extends Component{
                      subContainerClassName={"pages pagination"}
                      activeClassName={"active"} />
       </div>
-      <div className='grid-container'>
+      <div className='container'>
+      <div className='row justify-content-around'>
       {r}
+      </div>
       </div>
       </div>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  movies: state.movies.movies,
-  currentPage: state.movies.currentPage,
-  favourites: state.movies.favourites,
-  preference: state.movies.preference
-})
-
-export default connect(mapStateToProps, {getPopularMovies, handleFavourite, getFavouriteMovies} )(MovieCards);
+export default MovieCards;

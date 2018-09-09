@@ -1,16 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
+const md5 = require('js-md5');
+const jwt = require('jsonwebtoken');
+const fetch = require('isomorphic-fetch');
 
 const OK = 200;
 const CREATED = 201;
 const SEE_OTHER = 303;
 const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
 const CONFLICT = 409;
 const SERVER_ERROR = 500;
 const NO_CONTENT = 204;
+
+const  token_time = 1*60*1000;
+
+const api_key = '24786ae86c770b971c0c4549de40dea7';
 
 const serve = (port, model)=> {
   const app = express();
@@ -30,75 +37,205 @@ module.exports = {
 const setupRoutes = (app) => {
   app.use(bodyParser.json());
   app.use(cors());
-  app.post('/users/registration', newUser(app));
-  app.post('/users/login', loginUser(app));
-  app.put('/users/:username', updateUser(app));
-  app.get('/users/:username/favourites', getUserFavourites(app));
+  app.use(function (req, res, next) {
+  res.setHeader('content-type', 'application/json');
+  next();
+  });
+  app.post('/users/:username/registration', newUser(app));
+  app.post('/users/:username/login', loginUser(app));
+  app.put('/users/:username/favorites', updateUser(app));
+  app.get('/users/:username/favorites', getUserfavorites(app));
+  app.get('/users/:username/type=:type&page=:page', getmovielist(app));
+  app.get('/users/:username/list?', getFavoritelist(app));
 }
 
-const requestUrl = (req)=> {
-  const port = req.app.locals.port;
-  return `${req.protocol}://${req.hostname}:${port}${req.originalUrl}`;
+const createApiUrl = (type, key, page) => {
+  return 'https://api.themoviedb.org/3/movie/'+type+'?api_key='+api_key+'&page='+page;
 }
 
-
-const newUser = (app) => {
+const getFavoritelist = (app) => {
   return (request, response) => {
-    const username = request.body.username;
-    const pw = request.body.pw;
-    //console.log(username+'  '+pw);
-    request.app.locals.model.db_ops.newUser(username, pw)
+    const q = request.query.favorites.split(',');
+    const user = request.params.username;
+    //console.log('q', q);
+    const authToken = request.headers.authorization;
+    if(!authToken){
+      response.status(BAD_REQUEST).json({'message':'authorization token missing'})
+    }
+    const token = authToken.split(' ')[1];
+    jwt.verify(token, 'key', function(err, decoded){
+      if(err){
+        response.status(UNAUTHORIZED).json({'message':'authorization token expired or invalid'});
+      }else{
+        let details = []
+        q.forEach(qq=>{
+          fetch("https://api.themoviedb.org/3/movie/"+qq+"?api_key=24786ae86c770b971c0c4549de40dea7")
+          .then(r=> r.json())
+          .then(res=> {
+            if(res.status_code!==34)
+                details.push(res)})
+        });
+        setTimeout(()=>{
+        //  console.log(details);
+          const token = generateToken(user);
+          response.status(OK);
+          response.json({
+            token,
+            data: details
+          })
+        }, 1000);
+      }
+    });
+  }
+}
+
+  const getmovielist = (app) => {
+    return (request,response) => {
+      const params = request.params;
+      const url = createApiUrl(params.type, params.api_key, params.page);
+      const authToken = request.headers.authorization;
+      if(!authToken){
+        response.status(BAD_REQUEST).json({'message':'authorization token missing'})
+      }
+      const token = authToken.split(' ')[1];
+      jwt.verify(token, 'key', function(err, decoded){
+        if(err){
+          response.status(UNAUTHORIZED).json({'message':'authorization token expired or invalid'});
+        }else{
+          fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            const token = generateToken(params.username);
+            response.status(OK).json({data: data, token});
+          })
+        }
+      })
+    }
+  }
+
+
+  const newUser = (app) => {
+    return (request, response) => {
+      const username = request.params.username;
+      const pw = request.body.pw;
+    //  console.log(username+'  '+pw);
+      request.app.locals.model.db_ops.newUser(username, pw)
       .then((res)=>{
-        res===username? response.sendStatus(CREATED): response.sendStatus(CONFLICT);
+        if(res===username){
+          const token = generateToken(res._id, request.app.locals.model.secretKey);
+          response.status(CREATED).json({user:res, token});
+        }else{
+          response.sendStatus(CONFLICT);
+        }
       })
       .catch((err)=>{
         console.log(new Error(err));
         response.sendStatus(SERVER_ERROR);
       })
+    }
   }
-}
 
-const loginUser = (app) => {
-  return (request, response) => {
-    const username = request.body.username;
-    const pw = request.body.pw;
-//    console.log(username+'  '+pw);
-    request.app.locals.model.db_ops.loginUser(username, pw)
+  const loginUser = (app) => {
+    return (request, response) => {
+      const username = request.params.username;
+      const pw = request.body.pw;
+      //    console.log(username+'  '+pw);
+      request.app.locals.model.db_ops.loginUser(username, pw)
       .then((res)=>{
-        res.length!==0? response.sendStatus(OK): response.sendStatus(NOT_FOUND);
-      }).catch((err)=>{
-        console.log(new Error(err));
-        response.sendStatus(SERVER_ERROR);
-      })
-  }
-}
-
-const updateUser = (app) => {
-  return (request, response) => {
-    const username = request.params.username;
-    const favourites = request.body.favourites;
-    request.app.locals.model.db_ops.updateUser(username, favourites)
-      .then((res)=>{
-        res===1? response.sendStatus(NO_CONTENT):response.sendStatus(NOT_FOUND);
-      })
-  }
-}
-
-const getUserFavourites = (app) => {
-  return (request, response) => {
-    const username = request.params.username;
-    request.app.locals.model.db_ops.getUserFavourites(username)
-      .then((res) => {
-        if(res.length!==0) {
-              const obj = {'username': res[0]._id, 'favourites': res[0].favourites};
-              response.statusCode = OK;
-              response.json(obj);
+        if(res){
+          const token = generateToken(res._id);
+          response.status(OK).json({
+            token,
+            user: res
+          });
         }else{
-             response.sendStatus(NOT_FOUND);
-           }
+          response.sendStatus(NOT_FOUND);
+        }
       }).catch((err)=>{
         console.log(new Error(err));
         response.sendStatus(SERVER_ERROR);
       })
+    }
   }
-}
+
+  const updateUser = (app) => {
+    return (request, response) => {
+      //  console.log(request);
+      const username = request.params.username;
+      const favorites = request.body.favorites;
+      const authToken = request.headers.authorization;
+      if(!authToken){
+        response.status(BAD_REQUEST).json({'message':'authorization token missing'})
+      }
+      const token = authToken.split(' ')[1];
+      jwt.verify(token, 'key', function(err, decoded){
+        if(err){
+          response.status(UNAUTHORIZED).json({'message':'authorization token expired or invalid'});
+        }else{
+          request.app.locals.model.db_ops.updateUser(username, favorites)
+          .then((res)=>{
+            if(res===1){
+              const token = generateToken();
+              console.log(token);
+              response.status(OK).json({token});
+      //        console.log(response);
+            }else{
+              response.sendStatus(NOT_FOUND);
+            }
+          })
+        }
+      })
+    }
+  }
+
+  const getUserfavorites = (app) => {
+    return (request, response) => {
+      const username = request.params.username;
+      const authToken = request.headers.authorization;
+      if(!authToken){
+        response.status(BAD_REQUEST).json({'message':'authorization token missing'})
+      }
+
+      const token = authToken.split(' ')[1];
+      jwt.verify(token, 'key', function(err, decoded){
+        if(err){
+          response.status(UNAUTHORIZED).json({'message':'authorization token expired or invalid'});
+        }else{
+          request.app.locals.model.db_ops.getUserfavorites(username)
+          .then((res) => {
+            if(res.length!==0) {
+              const obj = {'username': res[0]._id, 'favorites': res[0].favorites};
+              const token = generateToken(res[0]._id);
+              response.status(OK);
+  //            console.log(res[0].favorites);
+              response.json({
+                token,
+                data: res[0].favorites });
+              }else{
+                response.status(NOT_FOUND);
+                response.json({
+                  data: 'invalid session' });
+                }
+              }).catch((err)=>{
+                console.log(new Error(err));
+                response.sendStatus(SERVER_ERROR);
+              })
+            }
+          })
+        }
+      }
+
+      const generateToken = (username, key) => {
+        const payload= {
+          username: username
+        }
+
+        const now = new Date();
+        const expires= 1 ;
+
+        const token = jwt.sign(payload, 'key', {
+          expiresIn: "10m"
+        })
+
+        return token;
+      }

@@ -1,54 +1,33 @@
-import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES} from './types.js';
+import {GET_POPULAR_MOVIES_GUEST, UPDATE_FAVOURITE_MOVIES_GUEST, GET_FAVOURITE_MOVIES_GUEST} from './types.js';
 
-export const getPopularMovies = (preference,page) =>{
-  return function (dispatch){
-    fetch("https://api.themoviedb.org/3/movie/"+preference+"?api_key=24786ae86c770b971c0c4549de40dea7&page="+page)
-    .then(res=> res.json())
-    .then(data =>
-      dispatch({
-        type: GET_POPULAR_MOVIES,
-        payload: data.results,
-        currentPage: page,
-        preference: preference
-      }))
-    }
+const guestKey = 'movieapp_guest';
+
+export const getPopularMovies = async (preference,page) =>{
+    const r = await fetch("https://api.themoviedb.org/3/movie/"+preference+"?api_key=24786ae86c770b971c0c4549de40dea7&page="+page)
+    const res = await r.json();
+    console.log(res.results);
+    return res.results;
   }
 
 
-export const handleFavourite = (movie, favourites) =>{
+export const handleFavourite = (movie) =>{
+  console.log(movie);
+    var favorites = localStorage.getItem(guestKey) || [];
+    console.log(favorites);
+    favorites.push(JSON.stringify(movie));
+    localStorage.setItem(guestKey,favorites);
 
-    return function (dispatch, getState){
-      const state = getState();
-      const copy = JSON.parse(JSON.stringify(state));
-      var favourites = copy.movies.favourites;
-      favourites.indexOf(movie.id)>=0?
-          favourites.splice(favourites.indexOf(movie.id),1):
-          favourites.push(movie.id);
-      dispatch({
-          type: UPDATE_FAVOURITE_MOVIES,
-          payload: favourites
-      })
-      fetch("http://localhost:8080/guest/guest",{
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        method: 'PUT',
-        body: JSON.stringify( {favourites:favourites, id:'guest'} )
-      })
-
-    }
   }
 
 export const getFavouriteMovies = () =>{
   return function (dispatch){
   fetch("http://localhost:8080/guest/")
-    .then(data=>data.json())
-    .then(favourites=>{
-      console.log('favs',favourites[0].favourites);
+    .then(data=> data.json())
+    .then(favorites=>{
+      console.log('favs',favorites[0].favorites);
       dispatch({
-        type: GET_FAVOURITE_MOVIES,
-        payload: favourites[0].favourites
+        type: GET_FAVOURITE_MOVIES_GUEST,
+        payload: favorites[0].favorites
       })
     })
   }

@@ -7,3 +7,6 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNDc4NmFlODZjNzcwYjk3MWMwYzQ1NDl
 
 popular movies api:
 https://api.themoviedb.org/3/movie/popular?api_key=24786ae86c770b971c0c4549de40dea7&page=1
+
+
+https://api.themoviedb.org/4/list/{list_id}?page=1&api_key=24786ae86c770b971c0c4549de40dea7&page=1

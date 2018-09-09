@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import { Route, BrowserRouter, Link } from 'react-router-dom';
 
 import {connect} from 'react-redux';
-import {loginUser} from '../../Actions/loginActions.js';
+import {registerUser} from '../../Actions/registerActions.js';
 
 
-class Login extends Component{
+class Registration extends Component{
   constructor(props){
     super(props);
     this.state = {
@@ -15,15 +15,8 @@ class Login extends Component{
     }
   }
 
-  componentWillMount(){
-  //   const session = localStorage.getItem('movieapp');
-  //   const t = session.split('|');
-  // //  console.log(typeof Number(t[2]), typeof Date.now());
-  //   if(Number(t[2]) > Date.now()){
-  //     this.props.history.push({
-  //       pathname: '/user'
-  //     })
-  //   }
+  componentDidMount(){
+    console.log('registration');
   }
 
   onChange= (e) => {
@@ -38,7 +31,7 @@ class Login extends Component{
     const name = this.state.username;
     const pw = this.state.password
     if(this.state.username.trim()&&this.state.password.trim()){
-        this.props.loginUser(name, pw);
+        this.props.registerUser(name, pw);
         this.setState({
           err:'',
           username:'',
@@ -59,7 +52,7 @@ class Login extends Component{
             pathname: '/'
           }}> Back </Link>
       <div>
-        <h3>Login</h3>
+        <h3>Register</h3>
         <form onSubmit={this.handleSubmit}>
           <label>user name:</label>
           <input type='text' name='username' value={this.state.username} placeholder='username' onChange={this.onChange}/>
@@ -76,7 +69,7 @@ class Login extends Component{
 }
 
 const mapStateToProps = state => ({
-  status: state.login.status
+  status: state.register.status
 })
 
-export default connect(mapStateToProps, {loginUser})(Login);
+export default connect(mapStateToProps, {registerUser})(Registration);
