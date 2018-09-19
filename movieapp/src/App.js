@@ -8,6 +8,8 @@ import store from './Utils/Store.js';
 import { Route, Router, Link } from 'react-router-dom';
 import LoggedInUser from './Containers/LoggedIn/LoggedInUser.js';
 import UserFavorites from './Containers/LoggedIn/UserFavorites.js';
+import GuestFavorites from './Containers/MovieCards/GuestFavorites.js';
+
 import history from './history.js';
 import {Provider } from 'react-redux';
 
@@ -25,6 +27,7 @@ class App extends Component {
       <Router history={history}>
       <div>
       <Route path='/' exact={true} component={MovieCards} />
+      <Route path='/Guestfavorites' exact={true} component={GuestFavorites} />
       <Route path='/login' exact={true} component={Login} />
       <Route path='/register' exact={true} component={Registration} />
       <Route path='/user' exact={true} component={LoggedInUser} />

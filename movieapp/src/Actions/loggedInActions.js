@@ -7,9 +7,11 @@ import {getLocalStorage, deleteLocalStorage, setLocalStorage} from '../Utils/loc
 const userKey = 'movieapp';
 
 export const initialSetup = (user) =>{
-  return function(dispatch){
+  return function(dispatch, getState){
     const session = getLocalStorage();
     if(session && user){
+      const state = getState();
+//// TODO:  add session verification
 //      console.log('initialSetup '+ JSON.stringify(generateHeaders()));
       dispatch(getUserfavorites(user));
       dispatch(getPopularMovies('popular',1,user));
@@ -52,7 +54,8 @@ export const getPopularMovies = (preference,page, username) =>{
       const payload = {
         movies: data.data.results,
         currentPage: page,
-        preference: preference
+        preference: preference,
+        pageCount: data.data.total_pages
       }
       dispatch({
         type: GET_POPULAR_MOVIES,
@@ -97,6 +100,22 @@ export const handleFavourite = (movie, favorites, username) =>{
           payload: payload
         })
       }
+    })
+  }
+}
+
+export const updateFavoriteOrder = (favorites) => {
+  return function(dispatch,getState){
+    const username = getState().user.user;
+    fetch("/users/"+username+"/favorites",{
+      headers: generateHeaders(),
+      method: 'PUT',
+      body: JSON.stringify( {favorites:favorites, id:username} )
+    })
+
+    dispatch({
+      type: UPDATE_FAVOURITE_MOVIES,
+      payload: favorites
     })
   }
 }

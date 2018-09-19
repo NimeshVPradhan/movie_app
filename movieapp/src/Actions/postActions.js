@@ -2,33 +2,38 @@ import {GET_POPULAR_MOVIES_GUEST, UPDATE_FAVOURITE_MOVIES_GUEST, GET_FAVOURITE_M
 
 const guestKey = 'movieapp_guest';
 
-export const getPopularMovies = async (preference,page) =>{
+export const getMovies = async (preference,page) =>{
+
     const r = await fetch("https://api.themoviedb.org/3/movie/"+preference+"?api_key=24786ae86c770b971c0c4549de40dea7&page="+page)
     const res = await r.json();
-    console.log(res.results);
-    return res.results;
-  }
+  //  console.log('postactions',res.results);
+    return res;
+}
 
 
 export const handleFavourite = (movie) =>{
-  console.log(movie);
-    var favorites = localStorage.getItem(guestKey) || [];
-    console.log(favorites);
-    favorites.push(JSON.stringify(movie));
-    localStorage.setItem(guestKey,favorites);
+    var favorites = JSON.parse(localStorage.getItem(guestKey)) || [];
+    console.log('favs',favorites);
+    var bool = true;
+    for(let i in favorites){
+      if(favorites[i].id===movie.id){
+        favorites.splice(i,1);
+        localStorage.setItem(guestKey,JSON.stringify(favorites));
+        bool=false;
+        break;
+      }else{
+        bool = true;
+      }
+    }
 
-  }
+    if(bool)favorites.push(movie);
+    localStorage.setItem(guestKey,JSON.stringify(favorites));
+    return favorites;
+}
 
-export const getFavouriteMovies = () =>{
-  return function (dispatch){
-  fetch("http://localhost:8080/guest/")
-    .then(data=> data.json())
-    .then(favorites=>{
-      console.log('favs',favorites[0].favorites);
-      dispatch({
-        type: GET_FAVOURITE_MOVIES_GUEST,
-        payload: favorites[0].favorites
-      })
-    })
-  }
+export const getInitialFavouriteMovies = () =>{
+
+  const f = localStorage.getItem(guestKey) || '[]';
+  localStorage.setItem(guestKey, f)
+  return JSON.parse(localStorage.getItem(guestKey));
 }

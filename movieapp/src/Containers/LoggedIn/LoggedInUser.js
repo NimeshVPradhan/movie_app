@@ -9,6 +9,8 @@ import {Link } from 'react-router-dom';
 
 import {connect} from 'react-redux';
 import {initialSetup, getPopularMovies, handleFavourite, handleLogout} from '../../Actions/loggedInActions.js';
+import {SelectMenu, Paginate} from '../../Components/m.js';
+
 
 class LoggedInUser extends Component{
 
@@ -61,31 +63,18 @@ class LoggedInUser extends Component{
     <button type='button' onClick={this.handleLogout}>Logout</button>
     <h2>Welcome</h2>
     <h4>{this.props.user}</h4>
-    <select onChange={this.handlePreference} >
-    <option value='popular' >Most popular</option>
-    <option value='now_playing' >Now playing</option>
-    <option value='top_rated' >Top rated</option>
-    <option value='upcoming' >Upcoming</option>
-    </select>
+
+    <SelectMenu onChange={this.handlePreference}/>
+
     <Link path='/' exact="true" to={{
       pathname: '/userfavorites'
     }}> Favorites </Link>
 
-    <div className='react-paginate'>
-    <ReactPaginate previousLabel={"previous"}
-    nextLabel={"next"}
-    breakLabel={<a href="">...</a>}
-    breakClassName={"break-me"}
-    pageCount={9}
-    marginPagesDisplayed={2}
-    pageRangeDisplayed={5}
-    onPageChange={this.handlePageClick}
-    containerClassName={"pagination"}
-    subContainerClassName={"pages pagination"}
-    activeClassName={"active"} />
-    </div>
+    <Paginate onPageChange={this.handlePageClick} pageCount={this.props.pageCount}/>
+    <div className='container'>
     <div className='row'>
     {r}
+    </div>
     </div>
     </div>
     </div>
@@ -99,7 +88,8 @@ const mapStateToProps = state => ({
   favorites: state.user.favorites,
   preference: state.user.preference,
   user: state.user.user,
-  session: state.user.session
+  session: state.user.session,
+  pageCount: state.user.pageCount
 })
 
 export default connect(mapStateToProps, {initialSetup, getPopularMovies, handleFavourite, handleLogout} )(LoggedInUser);

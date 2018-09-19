@@ -12,9 +12,9 @@ export default function(state= initialState, action){
     case GET_POPULAR_MOVIES_GUEST:
       return{
         ...state,
-        movies: action.payload,
-        currentPage: action.currentPage,
-        preference: action.preference
+        movies: action.payload.movies,
+        currentPage: action.payload.currentPage,
+        preference: action.payload.preference
       }
     case UPDATE_FAVOURITE_MOVIES_GUEST:
       return{

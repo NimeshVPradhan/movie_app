@@ -7,78 +7,101 @@ import MovieCard from '../../Components/MovieCard/MovieCard.js';
 
 import {Link } from 'react-router-dom';
 
-//import {connect} from 'react-redux';
-import {getPopularMovies, handleFavourite} from '../../Actions/postActions.js';
+import {connect} from 'react-redux';
+import {getMovies, handleFavourite, getInitialFavouriteMovies} from '../../Actions/postActions.js';
+
+import {SelectMenu, Paginate} from '../../Components/m.js';
+
+
 
 class MovieCards extends Component{
   constructor(){
     super();
     this.state = {
+      favorites : [],
       movies: [],
-      favorites: [],
       currentPage: 1,
-      preference: 'popular'
+      preference: 'popular',
+      totalPages: 10
     }
-
   }
 
   async componentDidMount(){
-    console.log('mount');
-    console.log(getPopularMovies(this.state.preference,this.state.currentPage));
-    //this.props.getFavouriteMovies();
+
+    const movies = await getMovies('popular',1);
+    const favorites = getInitialFavouriteMovies();
+    this.setState({
+        favorites: favorites,
+        movies: movies.results,
+        totalPages: movies.total_pages
+    })
   }
 
-  handlePageClick = (data) => {
-    this.props.getPopularMovies(this.props.preference,data.selected+1);
+  handlePageClick = async (data) => {
+    const movies = await getMovies(this.state.preference,data.selected+1);
+    console.log('movies', movies);
+    this.setState({
+        currentPage: data.selected+1,
+        movies: movies.results
+      })
   }
 
   handleFavourite = (movie) => {
-    this.props.handleFavourite(movie);
+    const f = handleFavourite(movie);
+    this.setState({
+      favorites: f
+    })
   }
 
-  handlePreference = (e) => {
-    this.props.getPopularMovies(e.target.value, 1);
+  handlePreference = async(e) => {
+    const preference = e.target.value;
+    console.log(preference);
+    const movies = await getMovies(preference,1);
+    this.setState({
+        preference: preference,
+        movies: movies.results,
+        totalPages: movies.total_pages
+      })
+    }
+
+  verifyFavorite = (movie) => {
+    const f = this.state.favorites;
+    for(let i in f){
+      if(movie.id===f[i].id) return true;
+    }
+    return false;
   }
 
   render(){
-    const movies = this.props.movies;
-  //  console.log(movies);
-    const r = movies.length!=0? movies.map((movie, index)=>
-      <MovieCard key={movie.id} movie={movie} handleFavourite={this.handleFavourite} favourite={this.props.favorites.indexOf(movie.id)>=0}/>
+    const movies = this.state.movies;
+    //console.log('render', this.state);
+    const r = movies? movies.map((movie, index)=>
+      <MovieCard key={'guest_'+movie.id} movie={movie} handleFavourite={this.handleFavourite} favourite={this.verifyFavorite(movie)}/>
     ): 'loading';
 
     return (
       <div>
-      <Link path='/' exact="true" to={{
+
+      <div>
+      <Link className='btn btn-success' path='/' exact="true" to={{
             pathname: '/login'
           }}> Login </Link>
-          <Link path='/' exact="true" to={{
-                pathname: '/register'
-              }}> Register </Link>
-
-          <br/>
-      <select onChange={this.handlePreference} >
-          <option value='popular' >Most popular</option>
-          <option value='now_playing' >Now playing</option>
-          <option value='top_rated' >Top rated</option>
-          <option value='upcoming' >Upcoming</option>
-      </select>
-
-      <div className='react-paginate'>
-      <ReactPaginate previousLabel={"previous"}
-                     nextLabel={"next"}
-                     breakLabel={<a href="">...</a>}
-                     breakClassName={"break-me"}
-                     pageCount={9}
-                     marginPagesDisplayed={2}
-                     pageRangeDisplayed={5}
-                     onPageChange={this.handlePageClick}
-                     containerClassName={"pagination"}
-                     subContainerClassName={"pages pagination"}
-                     activeClassName={"active"} />
+      <Link className='btn btn-success' path='/' exact="true" to={{
+            pathname: '/register'
+          }}> Register </Link>
       </div>
+      <br/>
+
+      <Link className='btn btn-outline-primary' path='/' exact="true" to={{
+        pathname: '/guestfavorites'
+      }}> Favorites </Link>
+      <br/>
+      <SelectMenu onChange={this.handlePreference}/>
+      <br/>
+      <Paginate onPageChange={this.handlePageClick} pageCount={this.state.totalPages}/>
+
       <div className='container'>
-      <div className='row justify-content-around'>
+      <div className='row'>
       {r}
       </div>
       </div>
@@ -86,5 +109,6 @@ class MovieCards extends Component{
     )
   }
 }
+
 
 export default MovieCards;

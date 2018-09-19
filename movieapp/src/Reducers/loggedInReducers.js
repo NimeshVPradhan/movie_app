@@ -6,7 +6,8 @@ const initialState = {
   favorites: [],
   preference: 'popular',
   session: false,
-  user: ''
+  user: '',
+  pageCount: 0
 }
 
 export default function(state= initialState, action){
@@ -18,7 +19,8 @@ export default function(state= initialState, action){
       ...state,
       movies: action.payload.movies,
       currentPage: action.payload.currentPage,
-      preference: action.payload.preference
+      preference: action.payload.preference,
+      pageCount: action.payload.pageCount
     }
     case UPDATE_FAVOURITE_MOVIES:
     return{

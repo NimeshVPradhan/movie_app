@@ -4,6 +4,7 @@ import { Route, BrowserRouter, Link } from 'react-router-dom';
 import {connect} from 'react-redux';
 import {loginUser} from '../../Actions/loginActions.js';
 
+const $= require('jquery');
 
 class Login extends Component{
   constructor(props){
@@ -15,15 +16,13 @@ class Login extends Component{
     }
   }
 
-  componentWillMount(){
-  //   const session = localStorage.getItem('movieapp');
-  //   const t = session.split('|');
-  // //  console.log(typeof Number(t[2]), typeof Date.now());
-  //   if(Number(t[2]) > Date.now()){
-  //     this.props.history.push({
-  //       pathname: '/user'
-  //     })
-  //   }
+  componentDidMount(){
+    $('[data-toggle="popover"]').popover({
+    html: true,
+  content: function() {
+          return $('#popover-content').html();
+        }
+  });
   }
 
   onChange= (e) => {
@@ -34,6 +33,7 @@ class Login extends Component{
   }
 
   handleSubmit = (e) => {
+    console.log('clc');
     e.preventDefault();
     const name = this.state.username;
     const pw = this.state.password
@@ -54,11 +54,12 @@ class Login extends Component{
 
   render(){
     return(
+
       <div>
       <Link to={{
             pathname: '/'
           }}> Back </Link>
-      <div>
+      <div id='popover-content'>
         <h3>Login</h3>
         <form onSubmit={this.handleSubmit}>
           <label>user name:</label>
