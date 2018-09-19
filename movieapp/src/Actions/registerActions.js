@@ -2,9 +2,7 @@ import {USER_REGISTRATION, USER_SESSION} from './types.js';
 import history from '../history.js';
 
 import generateHeaders from '../Utils/generateHeaders.js';
-import {getLocalStorage, deleteLocalStorage, setLocalStorage} from '../Utils/localStorage.js'
-
-const userKey = 'movieapp';
+import {setLocalStorage} from '../Utils/localStorage.js'
 
 export const registerUser = (username, pw) =>{
   return function(dispatch){
@@ -22,7 +20,7 @@ export const registerUser = (username, pw) =>{
       }else if(res.status===201){
         res.json()
         .then(result =>{
-          console.log('register',result);
+//          console.log('register',result);
 
           dispatch({
             type: USER_SESSION,

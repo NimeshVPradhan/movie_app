@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import ReactPaginate from 'react-paginate';
 
 import './MovieCards.css';
 import MovieCard from '../../Components/MovieCard/MovieCard.js';
 
 import {Link } from 'react-router-dom';
 
-import {connect} from 'react-redux';
 import {getMovies, handleFavourite, getInitialFavouriteMovies} from '../../Actions/postActions.js';
 
 import {SelectMenu, Paginate} from '../../Components/m.js';

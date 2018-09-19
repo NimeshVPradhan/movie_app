@@ -1,10 +1,8 @@
-import {USER_LOGIN, USER_LOGIN_LOADING, USER_LOGIN_SUCCES, USER_LOGIN_ERR, USER_SESSION} from './types.js';
+import {USER_LOGIN_LOADING, USER_LOGIN_SUCCES, USER_LOGIN_ERR, USER_SESSION} from './types.js';
 import history from '../history.js';
 
 import generateHeaders from '../Utils/generateHeaders.js';
-import {getLocalStorage, deleteLocalStorage, setLocalStorage} from '../Utils/localStorage.js'
-
-const userKey = 'movieapp';
+import {setLocalStorage} from '../Utils/localStorage.js'
 
 export const loginUser = (username, pw) => {
   //console.log('login');

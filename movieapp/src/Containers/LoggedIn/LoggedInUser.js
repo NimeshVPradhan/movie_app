@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import ReactPaginate from 'react-paginate';
 
 import './LoggedInUser.css';
 import MovieCard from '../../Components/MovieCard/MovieCard.js';
@@ -50,7 +49,7 @@ class LoggedInUser extends Component{
     const movies = this.props.movies;
     const favorites = this.props.favorites;
 
-    const r = (typeof movies=='undefined' || typeof favorites=='undefined')? 'loading': movies.map((movie, index)=>
+    const r = (typeof movies==='undefined' || typeof favorites==='undefined')? 'loading': movies.map((movie, index)=>
     <MovieCard key={movie.id} movie={movie} handleFavourite={this.handleFavourite} favourite={this.props.favorites.indexOf(movie.id)>=0}/>
   );
   return (

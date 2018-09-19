@@ -46,13 +46,11 @@ class MovieCard extends Component{
         open: true,
         cast: cast,
         genres: genres,
-        keywords: keyWords
+        keywords: keys
       })
   }
 
   render(){
-    let closeModal = () => this.setState({ open: false })
-    //console.log(this.props.movie);
     var ModalDetails =    <Modal isOpen={this.state.open} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle}>{this.props.movie.original_title}</ModalHeader>
           <ModalBody>

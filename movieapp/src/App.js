@@ -5,7 +5,7 @@ import MovieCards from './Containers/MovieCards/MovieCards.js';
 import Login from './Containers/Login/Login.js';
 import Registration from './Containers/Registration/Registration.js';
 import store from './Utils/Store.js';
-import { Route, Router, Link } from 'react-router-dom';
+import { Route, Router} from 'react-router-dom';
 import LoggedInUser from './Containers/LoggedIn/LoggedInUser.js';
 import UserFavorites from './Containers/LoggedIn/UserFavorites.js';
 import GuestFavorites from './Containers/MovieCards/GuestFavorites.js';

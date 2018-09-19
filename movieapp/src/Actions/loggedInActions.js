@@ -1,18 +1,13 @@
-import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION, SESSION_LOGOUT} from './types.js';
+import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION} from './types.js';
 import history from '../history.js';
 
 import generateHeaders from '../Utils/generateHeaders.js';
 import {getLocalStorage, deleteLocalStorage, setLocalStorage} from '../Utils/localStorage.js'
 
-const userKey = 'movieapp';
-
 export const initialSetup = (user) =>{
-  return function(dispatch, getState){
+  return function(dispatch){
     const session = getLocalStorage();
     if(session && user){
-      const state = getState();
-//// TODO:  add session verification
-//      console.log('initialSetup '+ JSON.stringify(generateHeaders()));
       dispatch(getUserfavorites(user));
       dispatch(getPopularMovies('popular',1,user));
     }else{
@@ -23,13 +18,11 @@ export const initialSetup = (user) =>{
 
 export const getUserfavorites = (username) => {
   return function(dispatch){
-    const t = getLocalStorage();
     fetch("/users/"+username+"/favorites",{
       headers:generateHeaders()
     })
     .then(r=>r.json())
     .then(data=>{
-  //    console.log('getUserfavorites',data);
       setLocalStorage(data.token);
       dispatch({
         type : GET_FAVOURITE_MOVIES,
@@ -43,7 +36,6 @@ export const getPopularMovies = (preference,page, username) =>{
 
   return function (dispatch, getState){
 
-    const t = getLocalStorage();
     fetch("/users/user/type="+preference+"&page="+page,{
       headers:generateHeaders()
     })
@@ -75,14 +67,13 @@ export const handleFavourite = (movie, favorites, username) =>{
     favorites.indexOf(movie.id)>=0?
     favorites.splice(favorites.indexOf(movie.id),1):
     favorites.push(movie.id);
-    const t = getLocalStorage();
     fetch("/users/"+username+"/favorites",{
       headers: generateHeaders(),
       method: 'PUT',
       body: JSON.stringify( {favorites:favorites, id:username} )
     })
     .then(r=>{
-      console.log('updarte fav',r);
+    //  console.log('updarte fav',r);
       r.json()
       .then(res=>setLocalStorage(res.token));
       if(r.status===200){

@@ -1,5 +1,3 @@
-import {GET_POPULAR_MOVIES_GUEST, UPDATE_FAVOURITE_MOVIES_GUEST, GET_FAVOURITE_MOVIES_GUEST} from './types.js';
-
 const guestKey = 'movieapp_guest';
 
 export const getMovies = async (preference,page) =>{

@@ -6,7 +6,6 @@ import {Link } from 'react-router-dom';
 import {
   SortableContainer,
   SortableElement,
-  SortableHandle,
   arrayMove,
 } from 'react-sortable-hoc';
 
