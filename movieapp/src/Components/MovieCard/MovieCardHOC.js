@@ -17,7 +17,6 @@ class MovieCardHOC extends React.Component{
 
   verifyFavorite = (movie) => {
     const f = this.state.favorites;
-    //console.log('verify favs', movie.id, f);
     for(let i in f){
       if(movie.id===f[i]) return true;
     }
@@ -32,7 +31,6 @@ class MovieCardHOC extends React.Component{
   }
 
   handleModal = (movie) => {
-    //console.log('handleModal received', movie);
     this.setState({
       open: !this.state.open,
       modalMovie: movie
@@ -40,7 +38,6 @@ class MovieCardHOC extends React.Component{
   }
 
   render(){
-  //  console.log(this);
     const movies = this.state.movies;
     const moviecardrender = movies.length>0? movies.map((movie, index)=>
       <MovieCard key={movie.id}
@@ -51,11 +48,11 @@ class MovieCardHOC extends React.Component{
     ): 'loading';
     return (
       <div>
-      <div className='container'>
-      <div className='row'>
-      {moviecardrender}
-      </div>
-      </div>
+        <div className='container'>
+          <div className='row'>
+            {moviecardrender}
+          </div>
+        </div>
         {this.state.open? <MovieCardModal movie={this.state.modalMovie}
                                           handleFavorite={this.props.handleFavorite}
                                           favorite={this.verifyFavorite(this.state.modalMovie)}

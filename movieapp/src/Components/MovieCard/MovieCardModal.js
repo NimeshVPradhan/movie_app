@@ -35,7 +35,6 @@ class MovieCardModal extends Component{
   }
 
   componentDidMount(){
-    //console.log('modal mounted',this.props);
     this.getDetails();
   }
 
@@ -51,11 +50,11 @@ class MovieCardModal extends Component{
     const cast = credits.cast.map(cast=> cast.name);
     const genres = details.genres.map(genre=> genre.name);
     const keys = keyWords.keywords.map(keyword=> keyword.name);
-      this.setState({
-        cast: cast,
-        genres: genres,
-        keywords: keys
-      })
+    this.setState({
+      cast: cast,
+      genres: genres,
+      keywords: keys
+    })
   }
 
   handleModal = () => {
@@ -71,27 +70,25 @@ class MovieCardModal extends Component{
                 <div className='col-sm-6'>
                   <img className='img-responsive' src = {'https://image.tmdb.org/t/p/w200'+this.props.movie.poster_path} alt={this.props.movie.original_title}/>
                 </div>
-                <div className='col-sm-6 details'>
-                  <div><span>Ratings: </span> {this.props.movie.vote_average}/10</div><hr/>
-                  <div><span>Total Votes:</span> {this.props.movie.vote_count}</div><hr/>
-                  <div><span>Language: </span> {this.props.movie.original_language}</div><hr/>
-                  <div onMouseEnter={this.handleShowFullGenres}
-                       onMouseLeave={this.handleShowFullGenres}
-                       className={this.state.showFullGenres?'':'overflow'}
-                  ><span>Genres: </span> {this.state.genres.join(', ')}</div><hr/>
-                  <div onMouseEnter={this.handleShowFullCast}
-                       onMouseLeave={this.handleShowFullCast}
-                       className={this.state.showFullCast?'':'overflow'}
-                  ><span>Cast:</span> {this.state.cast.join(', ')}</div><hr/>
-                  <div><span>Release date:</span> {this.props.movie.release_date}</div>
-                </div>
-              </div>
-            <hr/>
-              <div className='row'>
-                <div className='overview'><span>Overview:</span> {this.props.movie.overview}</div><br/>
+              <div className='col-sm-6 details'>
+                <div><span>Ratings: </span> {this.props.movie.vote_average}/10</div><hr/>
+                <div><span>Total Votes:</span> {this.props.movie.vote_count}</div><hr/>
+                <div><span>Language: </span> {this.props.movie.original_language}</div><hr/>
+                <div onMouseEnter={this.handleShowFullGenres}
+                     onMouseLeave={this.handleShowFullGenres}
+                     className={this.state.showFullGenres?'':'overflow'}><span>Genres: </span> {this.state.genres.join(', ')}</div><hr/>
+                <div onMouseEnter={this.handleShowFullCast}
+                     onMouseLeave={this.handleShowFullCast}
+                     className={this.state.showFullCast?'':'overflow'}><span>Cast:</span> {this.state.cast.join(', ')}</div><hr/>
+                <div><span>Release date:</span> {this.props.movie.release_date}</div>
               </div>
             </div>
-          </ModalBody>
+            <hr/>
+            <div className='row'>
+              <div className='overview'><span>Overview:</span> {this.props.movie.overview}</div><br/>
+            </div>
+          </div>
+        </ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={this.handleFavorite}>{this.props.favorite?'Remove favorite':'Add to favorite'}</Button>
         </ModalFooter>

@@ -24,7 +24,6 @@ class LoggedInUser extends Component{
   }
 
   handleFavorite = (movie) => {
-  //  console.log('loguser received', movie);
     this.props.handleFavorite(movie, this.props.favorites, this.props.user);
   }
 
@@ -49,26 +48,23 @@ class LoggedInUser extends Component{
 
   return (
     <div>
-    <div className={!this.props.session?'active':'inactive'}>
-    <p>session expired</p>
-    <button type='button' value='back' onClick={this.handleBack}>back</button>
-    </div>
-    <div className={this.props.session?'active':'inactive'}>
-    <button type='button' onClick={this.handleLogout}>Logout</button>
-    <h2>Welcome</h2>
-    <h4>{this.props.user}</h4>
+      <div className={!this.props.session?'active':'inactive'}>
+        <p>session expired</p>
+        <button type='button' value='back' onClick={this.handleBack}>back</button>
+      </div>
+      <div className={this.props.session?'active':'inactive'}>
+        <button type='button' onClick={this.handleLogout}>Logout</button>
+          <h2>Welcome</h2>
+          <h4>{this.props.user}</h4>
 
-    <SelectMenu onChange={this.handlePreference}/>
+          <SelectMenu onChange={this.handlePreference}/>
 
-    <Link path='/' exact="true" to={{
-      pathname: '/userfavorites'
-    }}> Favorites </Link>
-
-    <Paginate onPageChange={this.handlePageClick} pageCount={this.props.pageCount}/>
-
-    <MovieCardHOC movies={this.props.movies} favorites={this.props.favorites} handleFavorite={this.handleFavorite}/>
-
-    </div>
+          <Link path='/' exact="true" to={{
+            pathname: '/userfavorites'
+          }}> Favorites </Link>
+        <Paginate onPageChange={this.handlePageClick} pageCount={this.props.pageCount}/>
+        <MovieCardHOC movies={this.props.movies} favorites={this.props.favorites} handleFavorite={this.handleFavorite}/>
+      </div>
     </div>
   )
 }

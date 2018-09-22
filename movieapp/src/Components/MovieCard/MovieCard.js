@@ -19,7 +19,6 @@ class MovieCard extends Component{
   }
 
   render(){
-  //  console.log('moviecard favs',this.props);
     return(
       <div className = 'col-sm-4 col-md-4 col-lg-2 m'>
         <div className = 'moviecard'>

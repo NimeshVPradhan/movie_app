@@ -31,19 +31,19 @@ class MovieCards extends Component{
     const movies = await getMovies('popular',1);
     const favorites = getInitialFavoriteMovies();
     this.setState({
-        favorites: favorites,
-        movies: movies.results,
-        totalPages: movies.total_pages
+      favorites: favorites,
+      movies: movies.results,
+      totalPages: movies.total_pages
     },()=>this.setFavoriteIDs())
   }
 
   handlePageClick = async (data) => {
     const movies = await getMovies(this.state.preference,data.selected+1);
-  //  console.log('movies', movies);
+    //  console.log('movies', movies);
     this.setState({
-        currentPage: data.selected+1,
-        movies: movies.results
-      })
+      currentPage: data.selected+1,
+      movies: movies.results
+    })
   }
 
   setFavoriteIDs = () => {
@@ -63,14 +63,14 @@ class MovieCards extends Component{
 
   handlePreference = async(e) => {
     const preference = e.target.value;
-  //  console.log(preference);
+    //  console.log(preference);
     const movies = await getMovies(preference,1);
     this.setState({
-        preference: preference,
-        movies: movies.results,
-        totalPages: movies.total_pages
-      })
-    }
+      preference: preference,
+      movies: movies.results,
+      totalPages: movies.total_pages
+    })
+  }
 
   verifyFavorite = (movie) => {
     const f = this.state.favorites;
@@ -83,25 +83,25 @@ class MovieCards extends Component{
   render(){
     return (
       <div>
-
-      <div>
-      <Link className='btn btn-success' path='/' exact="true" to={{
+        <div>
+          <Link className='btn btn-success' path='/' exact="true" to={{
             pathname: '/login'
           }}> Login </Link>
-      <Link className='btn btn-success' path='/' exact="true" to={{
+
+          <Link className='btn btn-success' path='/' exact="true" to={{
             pathname: '/register'
           }}> Register </Link>
-      </div>
-      <Link className='btn btn-outline-primary' path='/' exact="true" to={{
-        pathname: '/guestfavorites'
-      }}> Favorites </Link>
-      <br/>
-      <SelectMenu onChange={this.handlePreference}/>
-      <br/>
-      <Paginate onPageChange={this.handlePageClick} pageCount={this.state.totalPages}/>
+        </div>
 
-      <MovieCardHOC movies={this.state.movies} favorites={this.state.favoriteIDs} handleFavorite={this.handleFavorite}/>
+        <Link className='btn btn-outline-primary' path='/' exact="true" to={{
+          pathname: '/guestfavorites'
+        }}> Favorites </Link>
+      <br/>
+        <SelectMenu onChange={this.handlePreference}/>
+      <br/>
+        <Paginate onPageChange={this.handlePageClick} pageCount={this.state.totalPages}/>
 
+        <MovieCardHOC movies={this.state.movies} favorites={this.state.favoriteIDs} handleFavorite={this.handleFavorite}/>
       </div>
     )
   }

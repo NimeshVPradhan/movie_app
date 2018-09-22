@@ -24,7 +24,6 @@ class UserFavorites extends Component{
   }
 
   componentDidMount(){
-  //  console.log('component did miot', this.props.favorites);
     this.getFavoriteMovies(this.props.favorites);
   }
 
@@ -38,7 +37,6 @@ class UserFavorites extends Component{
 
   getFavoriteMovies = (favorites) => {
     const token = localStorage.getItem('movieapp');
-  //  console.log('faavs', favorites);
     fetch('http://localhost:8080/users/user/list?favorites='+favorites,{
       method:'GET',
       headers:{
@@ -51,82 +49,81 @@ class UserFavorites extends Component{
       if(r.status===200){
         r.json()
         .then(res=>{
-            localStorage.setItem('movieapp', res.token);
-            this.setState({
-              favorites: res.data
-            })
-          }
-        )
-      }else{
-        this.setState({
-          session: false
-        })
-      }
-    })
-
-  }
-
-  onSortEnd = ({oldIndex, newIndex}) => {
-    const newOrder = arrayMove(this.props.favorites, oldIndex, newIndex);
-    if(oldIndex===newIndex){
+          localStorage.setItem('movieapp', res.token);
+          this.setState({
+            favorites: res.data
+          })
+        }
+      )
+    }else{
       this.setState({
-        open: true,
-        modalMovie: this.state.favorites[newIndex]
+        session: false
       })
     }
-    this.mapNewOrder(newOrder, newIndex);
-    this.props.updateFavoriteOrder(newOrder);
-  };
+  })
 
-  mapNewOrder = async (newOrder, newIndex) => {
-//    console.log('map newOrder');
-      var favs = this.state.favorites;
-      var newFavoriteOrder = [];
-      for(let i in newOrder){
-        for(let j in favs){
-          if(newOrder[i]===favs[j].id){
-            newFavoriteOrder.push(favs[j]);
-            this.setState({favorites : newFavoriteOrder});
-          }
-        }
-      }
-//      console.log('modal set',newOrder[newIndex]);
-  }
+}
 
-  handleBack = () => {
-    this.props.history.push({
-      pathname: '/'
+onSortEnd = ({oldIndex, newIndex}) => {
+  const newOrder = arrayMove(this.props.favorites, oldIndex, newIndex);
+  if(oldIndex===newIndex){
+    this.setState({
+      open: true,
+      modalMovie: this.state.favorites[newIndex]
     })
   }
+  this.mapNewOrder(newOrder, newIndex);
+  this.props.updateFavoriteOrder(newOrder);
+};
 
-  render(){
-    const favs = this.state.favorites.map(people=>
-      people
-    )
+mapNewOrder = async (newOrder, newIndex) => {
+  var favs = this.state.favorites;
+  var newFavoriteOrder = [];
+  for(let i in newOrder){
+    for(let j in favs){
+      if(newOrder[i]===favs[j].id){
+        newFavoriteOrder.push(favs[j]);
+        this.setState({favorites : newFavoriteOrder});
+      }
+    }
+  }
+}
+
+handleBack = () => {
+  this.props.history.push({
+    pathname: '/'
+  })
+}
+
+render(){
+  const favs = this.state.favorites.map(people=>
+    people
+  )
   return (
     this.state.session?
     <div>
-    <Link className='btn btn-outline-primary' path='/' exact="true" to={{
-      pathname: '/user'
-    }}> Back </Link>
-    <div className='container'>
-      {this.props.favorites.length===0?'no favorites :(': <SortableList items={favs} onSortEnd={this.onSortEnd} axis='xy' />}
-    </div>
-    {this.state.open? <MovieCardModal movie={this.state.modalMovie}
-                                      handleFavorite={()=>{}}
-                                      favorite={true}
-                                      handleModal={this.handleModal}
-                                      open={this.state.open} />:''}
+      <Link className='btn btn-outline-primary' path='/' exact="true" to={{
+        pathname: '/user'
+      }}> Back </Link>
 
+      <div className='container'>
+        {this.props.favorites.length===0?'no favorites :(': <SortableList items={favs} onSortEnd={this.onSortEnd} axis='xy' />}
+      </div>
+
+      {this.state.open? <MovieCardModal movie={this.state.modalMovie}
+        handleFavorite={()=>{}}
+        favorite={true}
+        handleModal={this.handleModal}
+        open={this.state.open} />:''}
     </div>
     :
     <div className={!this.props.session?'active':'inactive'}>
-    <p>session expired</p>
-    <button type='button' value='back' onClick={this.handleBack}>back</button>
+      <p>session expired</p>
+      <button type='button' value='back' onClick={this.handleBack}>back</button>
     </div>
 
-    )
-  }
+  )
+}
 }
 
 const mapStateToProps = state => ({

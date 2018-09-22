@@ -1,4 +1,4 @@
-import {GET_POPULAR_MOVIES_GUEST, UPDATE_FAVOURITE_MOVIES_GUEST, GET_FAVOURITE_MOVIES_GUEST} from '../Actions/types.js';
+mport {GET_POPULAR_MOVIES_GUEST, UPDATE_FAVOURITE_MOVIES_GUEST, GET_FAVOURITE_MOVIES_GUEST} from '../Actions/types.js';
 
 const initialState = {
   movies: [],

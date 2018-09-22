@@ -11,10 +11,8 @@ const initialState = {
 }
 
 export default function(state= initialState, action){
-//  console.log(action);
   switch (action.type) {
     case GET_POPULAR_MOVIES:
-    //console.log(GET_POPULAR_MOVIES);
     return{
       ...state,
       movies: action.payload.movies,
