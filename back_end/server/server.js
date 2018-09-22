@@ -245,7 +245,7 @@ const getFavoritelist = (app) => {
         const expires= 1 ;
 
         const token = jwt.sign(payload, 'key', {
-          expiresIn: "10m"
+          expiresIn: "2m"
         })
 
         return token;

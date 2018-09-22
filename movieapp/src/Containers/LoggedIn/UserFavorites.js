@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Link } from 'react-router-dom';
 import SortableList from '../../Components/SortableList/SortableList.js';
 
+import MovieCardModal from '../../Components/MovieCard/MovieCardModal.js';
 
 import {
   arrayMove,
@@ -15,7 +16,10 @@ class UserFavorites extends Component{
     super();
     this.state = {
       favorites:[],
-      session : true
+      session : true,
+      open: false,
+      modalMovie: {}
+
     }
   }
 
@@ -24,9 +28,17 @@ class UserFavorites extends Component{
     this.getFavoriteMovies(this.props.favorites);
   }
 
+  handleModal = () => {
+    this.setState({
+      open:false,
+      modalMovie: {}
+    })
+  }
+
+
   getFavoriteMovies = (favorites) => {
     const token = localStorage.getItem('movieapp');
-    console.log('faavs', favorites);
+  //  console.log('faavs', favorites);
     fetch('http://localhost:8080/users/user/list?favorites='+favorites,{
       method:'GET',
       headers:{
@@ -56,28 +68,43 @@ class UserFavorites extends Component{
 
   onSortEnd = ({oldIndex, newIndex}) => {
     const newOrder = arrayMove(this.props.favorites, oldIndex, newIndex);
-    this.mapNewOrder(newOrder);
+    if(oldIndex===newIndex){
+      this.setState({
+        open: true,
+        modalMovie: this.state.favorites[newIndex]
+      })
+    }
+    this.mapNewOrder(newOrder, newIndex);
     this.props.updateFavoriteOrder(newOrder);
   };
 
-  mapNewOrder = async (newOrder) => {
+  mapNewOrder = async (newOrder, newIndex) => {
+//    console.log('map newOrder');
       var favs = this.state.favorites;
       var newFavoriteOrder = [];
       for(let i in newOrder){
         for(let j in favs){
           if(newOrder[i]===favs[j].id){
             newFavoriteOrder.push(favs[j]);
-            break;
+            this.setState({favorites : newFavoriteOrder});
           }
         }
       }
-    this.setState({favorites : newFavoriteOrder});
+//      console.log('modal set',newOrder[newIndex]);
   }
+
+  handleBack = () => {
+    this.props.history.push({
+      pathname: '/'
+    })
+  }
+
   render(){
     const favs = this.state.favorites.map(people=>
       people
     )
   return (
+    this.state.session?
     <div>
     <Link className='btn btn-outline-primary' path='/' exact="true" to={{
       pathname: '/user'
@@ -85,7 +112,19 @@ class UserFavorites extends Component{
     <div className='container'>
       {this.props.favorites.length===0?'no favorites :(': <SortableList items={favs} onSortEnd={this.onSortEnd} axis='xy' />}
     </div>
+    {this.state.open? <MovieCardModal movie={this.state.modalMovie}
+                                      handleFavorite={()=>{}}
+                                      favorite={true}
+                                      handleModal={this.handleModal}
+                                      open={this.state.open} />:''}
+
     </div>
+    :
+    <div className={!this.props.session?'active':'inactive'}>
+    <p>session expired</p>
+    <button type='button' value='back' onClick={this.handleBack}>back</button>
+    </div>
+
     )
   }
 }

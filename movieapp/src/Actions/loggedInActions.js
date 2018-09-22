@@ -24,7 +24,7 @@ export const getUserfavorites = (username) => {
     .then(r=>r.json())
     .then(data=>{
       setLocalStorage(data.token);
-      console.log('logged in actions getUserfavorites', data.data);
+  //    console.log('logged in actions getUserfavorites', data.data);
       dispatch({
         type : GET_FAVOURITE_MOVIES,
         payload: data.data
@@ -68,7 +68,7 @@ export const handleFavorite = (movie, favorites, username) =>{
     favorites.indexOf(movie.id)>=0?
     favorites.splice(favorites.indexOf(movie.id),1):
     favorites.push(movie.id);
-    console.log('use favs',favorites);
+  //  console.log('use favs',favorites);
     fetch("/users/"+username+"/favorites",{
       headers: generateHeaders(),
       method: 'PUT',
