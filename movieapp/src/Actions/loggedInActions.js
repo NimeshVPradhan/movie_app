@@ -24,6 +24,7 @@ export const getUserfavorites = (username) => {
     .then(r=>r.json())
     .then(data=>{
       setLocalStorage(data.token);
+      console.log('logged in actions getUserfavorites', data.data);
       dispatch({
         type : GET_FAVOURITE_MOVIES,
         payload: data.data

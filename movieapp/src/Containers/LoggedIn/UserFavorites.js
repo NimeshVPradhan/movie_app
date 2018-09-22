@@ -1,33 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import MovieCard from '../../Components/MovieCard/MovieCard.js';
 import {Link } from 'react-router-dom';
+import SortableList from '../../Components/SortableList/SortableList.js';
 
 
 import {
-  SortableContainer,
-  SortableElement,
   arrayMove,
 } from 'react-sortable-hoc';
 import {updateFavoriteOrder} from '../../Actions/loggedInActions.js';
-
-
-const SortableItem = SortableElement((movie) => {
-//  console.log('movie', movie.value);
-  return (
-    <MovieCard key={'favorites'+movie.value.id} movie={movie.value} handleFavourite={()=>{}} favourite={true} />
-  );
-});
-
-const SortableList = SortableContainer(({items}) => {
-  return (
-    <div className='row'>
-    {items.map((value, index) => (
-      <SortableItem key={'item-'+value.id} index={index} value={value} />
-    ))}
-    </div>
-  );
-});
 
 
 class UserFavorites extends Component{
@@ -40,12 +20,13 @@ class UserFavorites extends Component{
   }
 
   componentDidMount(){
+    console.log('component did miot', this.props.favorites);
     this.getFavoriteMovies(this.props.favorites);
   }
 
   getFavoriteMovies = (favorites) => {
     const token = localStorage.getItem('movieapp');
-    //console.log('faavs', favorites);
+    console.log('faavs', favorites);
     fetch('http://localhost:8080/users/user/list?favorites='+favorites,{
       method:'GET',
       headers:{
@@ -55,15 +36,14 @@ class UserFavorites extends Component{
       }
     })
     .then(r=> {
-      //console.log('r', r.status);
       if(r.status===200){
         r.json()
         .then(res=>{
-          //console.log(res.data);
+          console.log('gefvs',res.data);
             localStorage.setItem('movieapp', res.token);
             this.setState({
               favorites: res.data
-            },()=>console.log('first', this.state.favorites))
+            })
           }
         )
       }else{
@@ -84,7 +64,7 @@ class UserFavorites extends Component{
   mapNewOrder = async (newOrder) => {
       var favs = this.state.favorites;
       var newFavoriteOrder = [];
-      console.log('favs',favs);
+    //  console.log('favs',favs);
       for(let i in newOrder){
         for(let j in favs){
           if(newOrder[i]===favs[j].id){
@@ -106,7 +86,7 @@ class UserFavorites extends Component{
       pathname: '/user'
     }}> Back </Link>
     <div className='container'>
-      <SortableList items={favs} onSortEnd={this.onSortEnd} axis='xy' />
+      {this.props.favorites.length===0?'no favorites :(': <SortableList items={favs} onSortEnd={this.onSortEnd} axis='xy' />}
     </div>
     </div>
     )

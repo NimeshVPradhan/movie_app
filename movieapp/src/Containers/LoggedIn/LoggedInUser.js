@@ -8,7 +8,8 @@ import {Link } from 'react-router-dom';
 
 import {connect} from 'react-redux';
 import {initialSetup, getPopularMovies, handleFavourite, handleLogout} from '../../Actions/loggedInActions.js';
-import {SelectMenu, Paginate} from '../../Components/m.js';
+import {SelectMenu} from '../../Components/m.js';
+import Paginate from '../../Components/Pagination/Paginate.js'
 
 
 class LoggedInUser extends Component{
@@ -24,7 +25,7 @@ class LoggedInUser extends Component{
     this.props.getPopularMovies(this.props.preference,data.selected+1);
   }
 
-  handleFavourite = (movie) => {
+  handleFavorite = (movie) => {
     this.props.handleFavourite(movie, this.props.favorites, this.props.user);
   }
 
@@ -50,7 +51,7 @@ class LoggedInUser extends Component{
     const favorites = this.props.favorites;
 
     const r = (typeof movies==='undefined' || typeof favorites==='undefined')? 'loading': movies.map((movie, index)=>
-    <MovieCard key={movie.id} movie={movie} handleFavourite={this.handleFavourite} favourite={this.props.favorites.indexOf(movie.id)>=0}/>
+    <MovieCard key={'user_'+movie.id} movie={movie} handleFavorite={this.handleFavorite} favourite={this.props.favorites.indexOf(movie.id)>=0}/>
   );
   return (
     <div>

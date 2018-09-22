@@ -38,8 +38,8 @@ const setupRoutes = (app) => {
   app.use(bodyParser.json());
   app.use(cors());
   app.use(function (req, res, next) {
-  res.setHeader('content-type', 'application/json');
-  next();
+    res.setHeader('content-type', 'application/json');
+    next();
   });
   app.post('/users/:username/registration', newUser(app));
   app.post('/users/:username/login', loginUser(app));
@@ -50,7 +50,7 @@ const setupRoutes = (app) => {
 }
 
 const createApiUrl = (type, key, page) => {
-  return 'https://api.themoviedb.org/3/movie/'+type+'?api_key='+api_key+'&page='+page;
+  return 'https://api.themoviedb.org/3/movie/'+type+'?api_key='+api_key+'&page='+page+'&language=en-US';
 }
 
 const getFavoritelist = (app) => {
@@ -73,21 +73,32 @@ const getFavoritelist = (app) => {
           .then(r=> r.json())
           .then(res=> {
             if(res.status_code!==34)
-                details.push(res)})
-        });
-        setTimeout(()=>{
-        //  console.log(details);
-          const token = generateToken(user);
-          response.status(OK);
-          response.json({
-            token,
-            data: details
+            details.push(res)})
+          });
+
+          let _promises = q.map(qq=>{
+            return fetch("https://api.themoviedb.org/3/movie/"+qq+"?api_key=24786ae86c770b971c0c4549de40dea7");
           })
-        }, 1000);
-      }
-    });
+          let results = []
+          Promise.all(_promises)
+          .then((promisesNew)=>{
+            let newP = promisesNew.map(p => {return p.json()});
+
+            Promise.all(newP)
+              .then(result=>{
+                const rr = result.map(r=>r.id);
+                const token = generateToken(user);
+                response.status(OK);
+                response.json({
+                  token,
+                  data: result
+                })
+              })
+          })
+        }
+      });
+    }
   }
-}
 
   const getmovielist = (app) => {
     return (request,response) => {
@@ -118,7 +129,7 @@ const getFavoritelist = (app) => {
     return (request, response) => {
       const username = request.params.username;
       const pw = request.body.pw;
-    //  console.log(username+'  '+pw);
+      //  console.log(username+'  '+pw);
       request.app.locals.model.db_ops.newUser(username, pw)
       .then((res)=>{
         if(res===username){
@@ -176,9 +187,9 @@ const getFavoritelist = (app) => {
           .then((res)=>{
             if(res===1){
               const token = generateToken();
-              console.log(token);
+              //  console.log(token);
               response.status(OK).json({token});
-      //        console.log(response);
+              //        console.log(response);
             }else{
               response.sendStatus(NOT_FOUND);
             }
@@ -207,7 +218,7 @@ const getFavoritelist = (app) => {
               const obj = {'username': res[0]._id, 'favorites': res[0].favorites};
               const token = generateToken(res[0]._id);
               response.status(OK);
-  //            console.log(res[0].favorites);
+              //            console.log(res[0].favorites);
               response.json({
                 token,
                 data: res[0].favorites });

@@ -8,8 +8,8 @@ import {Link } from 'react-router-dom';
 
 import {getMovies, handleFavourite, getInitialFavouriteMovies} from '../../Actions/postActions.js';
 
-import {SelectMenu, Paginate} from '../../Components/m.js';
-
+import {SelectMenu} from '../../Components/m.js';
+import Paginate from '../../Components/Pagination/Paginate.js'
 
 
 class MovieCards extends Component{
@@ -44,7 +44,7 @@ class MovieCards extends Component{
       })
   }
 
-  handleFavourite = (movie) => {
+  handleFavorite = (movie) => {
     const f = handleFavourite(movie);
     this.setState({
       favorites: f
@@ -74,7 +74,7 @@ class MovieCards extends Component{
     const movies = this.state.movies;
     //console.log('render', this.state);
     const r = movies? movies.map((movie, index)=>
-      <MovieCard key={'guest_'+movie.id} movie={movie} handleFavourite={this.handleFavourite} favourite={this.verifyFavorite(movie)}/>
+      <MovieCard key={'guest_'+movie.id} movie={movie} handleFavorite={this.handleFavorite} favourite={this.verifyFavorite(movie)}/>
     ): 'loading';
 
     return (
@@ -88,8 +88,6 @@ class MovieCards extends Component{
             pathname: '/register'
           }}> Register </Link>
       </div>
-      <br/>
-
       <Link className='btn btn-outline-primary' path='/' exact="true" to={{
         pathname: '/guestfavorites'
       }}> Favorites </Link>
@@ -97,7 +95,6 @@ class MovieCards extends Component{
       <SelectMenu onChange={this.handlePreference}/>
       <br/>
       <Paginate onPageChange={this.handlePageClick} pageCount={this.state.totalPages}/>
-
       <div className='container'>
       <div className='row'>
       {r}

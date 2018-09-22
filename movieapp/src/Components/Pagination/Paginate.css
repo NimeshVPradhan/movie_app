@@ -1,0 +1,28 @@
+.react-paginate ul {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.react-paginate li {
+    display: inline-block;
+    background: white;
+    margin-left: 5px;
+    margin-right: 5px;
+    font-weight: bold;
+    font-style: normal;
+    color: black;
+    border: solid 1px;
+    border-color: blue;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.react-paginate .break a {
+    cursor: default;
+    background: white;
+}
+
+.react-paginate {
+  padding: 5px;
+}

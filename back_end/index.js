@@ -12,7 +12,7 @@ const DB_URL = 'mongodb://localhost:27017/movie_app';
 
 
 function getPort(argv) {
-  let port = Number(argv[2]) || 8081;
+  let port = Number(argv[2]) || 8080;
     return port;
 }
 

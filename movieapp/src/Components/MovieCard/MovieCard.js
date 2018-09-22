@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import './MovieCard.css';
 import nfav from './images/nfav.png';
 import fav from './images/fav.png';
-
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {ModalDetails} from './MovieCardModal.js';
 
 class MovieCard extends Component{
 
@@ -19,13 +18,27 @@ class MovieCard extends Component{
     }
   }
 
-  handleFavourite = () => {
-    this.props.handleFavourite(this.props.movie);
+  handleFavorite = () => {
+    this.props.handleFavorite(this.props.movie);
   }
 
   toggle = () => {
     this.setState({
       open: !this.state.open
+    });
+  }
+
+  handleShowFullCast = () => {
+    console.log('handleShowFullCast');
+    this.setState({
+      showFullCast : !this.state.showFullCast
+    });
+  }
+
+  handleShowFullGenres = () => {
+    console.log('handleShowFullGenres');
+    this.setState({
+      showFullGenres : !this.state.showFullGenres
     });
   }
 
@@ -51,56 +64,32 @@ class MovieCard extends Component{
   }
 
   render(){
-    var ModalDetails =    <Modal isOpen={this.state.open} toggle={this.toggle} className={this.props.className}>
-          <ModalHeader toggle={this.toggle}>{this.props.movie.original_title}</ModalHeader>
-          <ModalBody>
-            <div className='container'>
-            <div className='row row-eq-height'>
-              <div className='col-sm-6'>
-              <img className='img-responsive' src = {'https://image.tmdb.org/t/p/w200'+this.props.movie.poster_path} alt={this.props.movie.original_title}/>
-              </div>
-              <div className='col-sm-6 details'>
-                <div><span>Ratings: </span> {this.props.movie.vote_average}/10</div><hr/>
-                <div><span>Total Votes:</span> {this.props.movie.vote_count}</div><hr/>
-                <div><span>Language: </span> {this.props.movie.original_language}</div><hr/>
-                <div onMouseEnter={()=> this.setState({showFullGenres: true})}
-                      onMouseLeave={()=> this.setState({showFullGenres:false})}
-                      className={this.state.showFullGenres?'':'overflow'}
-                  ><span>Genres: </span> {this.state.genres.join(', ')}</div><hr/>
-                <div onMouseEnter={()=> this.setState({showFullCast: true})}
-                      onMouseLeave={()=> this.setState({showFullCast:false})}
-                      className={this.state.showFullCast?'':'overflow'}
-                ><span>Cast:</span> {this.state.cast.join(', ')}</div><hr/>
-                <div><span>Release date:</span> {this.props.movie.release_date}</div>
-              </div>
-            </div>
-            <hr/>
-            <div className='row'>
-              <div className='overview'><span>Overview:</span> {this.props.movie.overview}</div><br/>
-            </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="secondary" onClick={this.handleFavourite}>{this.props.favourite?'Remove favorite':'Add to favorite'}</Button>
-          </ModalFooter>
-        </Modal>
-
     return(
       <div className = 'col-sm-4 col-md-4 col-lg-2 m'>
       <div className = 'moviecard'>
-      <div className ='moviecard-content'>
-        <button type="button" className="btn btn-link w-100" onClick={this.getDetails}>
+        <button type="button" className="btn btn-link w-100 p-0 m-0" onClick={this.getDetails}>
           <img className='poster img-responsive w-100' src = {'https://image.tmdb.org/t/p/w200'+this.props.movie.poster_path} alt={this.props.movie.original_title}/>
         </button>
         <div className='title'>
-        <img src={this.props.favourite?fav:nfav} alt='favorite'  className='image' onClick={this.handleFavourite}/>
+        <img src={this.props.favourite?fav:nfav} alt='favorite'  className='image' onClick={this.handleFavorite}/>
         <span>{this.props.movie.original_title}</span>
         </div>
       <div>
       </div>
       </div>
-      </div>
-      {ModalDetails}
+        <ModalDetails
+          movie={this.props.movie}
+          genres={this.state.genres}
+          open={this.state.open}
+          cast={this.state.cast}
+          showFullCast={this.state.showFullCast}
+          showFullGenres={this.state.showFullGenres}
+          toggle={this.toggle}
+          className={this.props.className}
+          favorite={this.props.favourite}
+          handleFavorite={this.handleFavorite}
+          handleShowFullCast={this.handleShowFullCast}
+          handleShowFullGenres={this.handleShowFullGenres} />
       </div>
     )
   }
