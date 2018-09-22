@@ -7,7 +7,7 @@ import MovieCardHOC from '../../Components/MovieCard/MovieCardHOC.js';
 
 import {Link } from 'react-router-dom';
 
-import {getMovies, handleFavorite, getInitialFavoriteMovies} from '../../Actions/postActions.js';
+import {getMovies, handleFavorite, getInitialFavoriteMovies} from '../../Actions/guestActions.js';
 
 import {SelectMenu} from '../../Components/m.js';
 import Paginate from '../../Components/Pagination/Paginate.js'
