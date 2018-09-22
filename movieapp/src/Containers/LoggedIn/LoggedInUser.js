@@ -5,17 +5,15 @@ import './LoggedInUser.css';
 import MovieCard from '../../Components/MovieCard/MovieCard.js';
 
 import {Link } from 'react-router-dom';
+import MovieCardHOC from '../../Components/MovieCard/MovieCardHOC.js';
 
 import {connect} from 'react-redux';
-import {initialSetup, getPopularMovies, handleFavourite, handleLogout} from '../../Actions/loggedInActions.js';
+import {initialSetup, getPopularMovies, handleFavorite, handleLogout} from '../../Actions/loggedInActions.js';
 import {SelectMenu} from '../../Components/m.js';
 import Paginate from '../../Components/Pagination/Paginate.js'
 
 
 class LoggedInUser extends Component{
-
-  componentWillMount(){
-  }
 
   componentDidMount(){
     this.props.initialSetup(this.props.user);
@@ -26,7 +24,8 @@ class LoggedInUser extends Component{
   }
 
   handleFavorite = (movie) => {
-    this.props.handleFavourite(movie, this.props.favorites, this.props.user);
+  //  console.log('loguser received', movie);
+    this.props.handleFavorite(movie, this.props.favorites, this.props.user);
   }
 
   handlePreference = (e) => {
@@ -47,12 +46,7 @@ class LoggedInUser extends Component{
   }
 
   render(){
-    const movies = this.props.movies;
-    const favorites = this.props.favorites;
 
-    const r = (typeof movies==='undefined' || typeof favorites==='undefined')? 'loading': movies.map((movie, index)=>
-    <MovieCard key={'user_'+movie.id} movie={movie} handleFavorite={this.handleFavorite} favourite={this.props.favorites.indexOf(movie.id)>=0}/>
-  );
   return (
     <div>
     <div className={!this.props.session?'active':'inactive'}>
@@ -71,11 +65,9 @@ class LoggedInUser extends Component{
     }}> Favorites </Link>
 
     <Paginate onPageChange={this.handlePageClick} pageCount={this.props.pageCount}/>
-    <div className='container'>
-    <div className='row'>
-    {r}
-    </div>
-    </div>
+
+    <MovieCardHOC movies={this.props.movies} favorites={this.props.favorites} handleFavorite={this.handleFavorite}/>
+
     </div>
     </div>
   )
@@ -92,4 +84,4 @@ const mapStateToProps = state => ({
   pageCount: state.user.pageCount
 })
 
-export default connect(mapStateToProps, {initialSetup, getPopularMovies, handleFavourite, handleLogout} )(LoggedInUser);
+export default connect(mapStateToProps, {initialSetup, getPopularMovies, handleFavorite, handleLogout} )(LoggedInUser);

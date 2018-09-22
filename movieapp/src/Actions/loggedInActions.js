@@ -59,7 +59,7 @@ export const getPopularMovies = (preference,page, username) =>{
 }
 
 
-export const handleFavourite = (movie, favorites, username) =>{
+export const handleFavorite = (movie, favorites, username) =>{
 
   return function (dispatch, getState){
     const state = getState();
@@ -68,6 +68,7 @@ export const handleFavourite = (movie, favorites, username) =>{
     favorites.indexOf(movie.id)>=0?
     favorites.splice(favorites.indexOf(movie.id),1):
     favorites.push(movie.id);
+    console.log('use favs',favorites);
     fetch("/users/"+username+"/favorites",{
       headers: generateHeaders(),
       method: 'PUT',

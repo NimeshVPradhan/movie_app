@@ -9,9 +9,9 @@ export const getMovies = async (preference,page) =>{
 }
 
 
-export const handleFavourite = (movie) =>{
+export const handleFavorite = (movie) =>{
     var favorites = JSON.parse(localStorage.getItem(guestKey)) || [];
-    console.log('favs',favorites);
+  //  console.log('favs',favorites);
     var bool = true;
     for(let i in favorites){
       if(favorites[i].id===movie.id){
@@ -25,11 +25,13 @@ export const handleFavourite = (movie) =>{
     }
 
     if(bool)favorites.push(movie);
+    //console.log('localStorage', favorites);
+
     localStorage.setItem(guestKey,JSON.stringify(favorites));
     return favorites;
 }
 
-export const getInitialFavouriteMovies = () =>{
+export const getInitialFavoriteMovies = () =>{
 
   const f = localStorage.getItem(guestKey) || '[]';
   localStorage.setItem(guestKey, f)

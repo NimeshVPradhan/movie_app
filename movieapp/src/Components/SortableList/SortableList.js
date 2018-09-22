@@ -8,7 +8,7 @@ import {
 
 const SortableItem = SortableElement((movie) => {
   return (
-    <MovieCard key={movie.value.id} movie={movie.value} handleFavourite={()=>{}} favourite={true} />
+    <MovieCard key={movie.value.id} movie={movie.value} handleFavorite={()=>{}} favorite={true} />
   );
 });
 

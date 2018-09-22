@@ -4,6 +4,7 @@ import SortableList from '../../Components/SortableList/SortableList.js';
 import {
   arrayMove,
 } from 'react-sortable-hoc';
+import MovieCardModal from '../../Components/MovieCard/MovieCardModal.js';
 
 
 class GuestFavorites extends Component{
@@ -11,7 +12,8 @@ class GuestFavorites extends Component{
     super();
     this.state = {
       favorites:[],
-      open: false
+      open: false,
+      modalMovie: {}
     }
   }
 
@@ -31,13 +33,21 @@ class GuestFavorites extends Component{
           favorites: newOrder
         })
         localStorage.setItem('movieapp_guest', JSON.stringify(newOrder));
-        break;
+        return;
       }
     }
     this.setState({
-      open: true
+      open: true,
+      modalMovie: newOrder[newIndex]
     })
   };
+
+  handleModal = () => {
+    this.setState({
+      open:false,
+      modalMovie: {}
+    })
+  }
 
   render(){
     const favs = this.state.favorites.map(people=>
@@ -51,7 +61,14 @@ class GuestFavorites extends Component{
       <div className='container w-70'>
         {this.state.favorites.length===0?'no favorites :(':<SortableList items={favs} onSortEnd={this.onSortEnd} axis='xy' />
 }
+
       </div>
+      {this.state.open? <MovieCardModal movie={this.state.modalMovie}
+                                        handleFavorite={()=>{}}
+                                        favorite={true}
+                                        handleModal={this.handleModal}
+                                        open={this.state.open} />:''}
+
       </div>
     )
   }

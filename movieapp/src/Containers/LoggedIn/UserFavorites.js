@@ -20,7 +20,7 @@ class UserFavorites extends Component{
   }
 
   componentDidMount(){
-    console.log('component did miot', this.props.favorites);
+  //  console.log('component did miot', this.props.favorites);
     this.getFavoriteMovies(this.props.favorites);
   }
 
@@ -39,7 +39,6 @@ class UserFavorites extends Component{
       if(r.status===200){
         r.json()
         .then(res=>{
-          console.log('gefvs',res.data);
             localStorage.setItem('movieapp', res.token);
             this.setState({
               favorites: res.data
@@ -64,7 +63,6 @@ class UserFavorites extends Component{
   mapNewOrder = async (newOrder) => {
       var favs = this.state.favorites;
       var newFavoriteOrder = [];
-    //  console.log('favs',favs);
       for(let i in newOrder){
         for(let j in favs){
           if(newOrder[i]===favs[j].id){
@@ -76,7 +74,6 @@ class UserFavorites extends Component{
     this.setState({favorites : newFavoriteOrder});
   }
   render(){
-    console.log('render',this.state.favorites);
     const favs = this.state.favorites.map(people=>
       people
     )
