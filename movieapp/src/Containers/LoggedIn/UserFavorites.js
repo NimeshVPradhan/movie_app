@@ -72,9 +72,9 @@ handleBack = () => {
 }
 
 render(){
-  const favs = this.state.favorites.map(people=>
+  const favs = this.props.session?this.state.favorites.map(people=>
     people
-  )
+  ):[]
   return (
     this.props.session?
     <div>
