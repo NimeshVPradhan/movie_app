@@ -2,13 +2,8 @@ import React, {Component} from 'react';
 import './MovieCard.css';
 import nfav from './images/nfav.png';
 import fav from './images/fav.png';
-import MovieCardModal from './MovieCardModal.js';
 
 class MovieCard extends Component{
-
-  constructor(props){
-    super(props);
-  }
 
   handleFavorite = () => {
     this.props.handleFavorite(this.props.movie);

@@ -37,7 +37,7 @@ class UserFavorites extends Component{
 
   getFavoriteMovies = (favorites) => {
     const token = localStorage.getItem('movieapp');
-    fetch('http://localhost:8080/users/user/list?favorites='+favorites,{
+    fetch('/users/user/list?favorites='+favorites,{
       method:'GET',
       headers:{
         'authorization':'bearer '+token,

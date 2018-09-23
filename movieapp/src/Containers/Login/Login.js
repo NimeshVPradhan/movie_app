@@ -4,8 +4,6 @@ import {Link } from 'react-router-dom';
 import {connect} from 'react-redux';
 import {loginUser} from '../../Actions/loginActions.js';
 
-const $= require('jquery');
-
 class Login extends Component{
   constructor(props){
     super(props);

@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import './MovieCards.css';
-import MovieCard from '../../Components/MovieCard/MovieCard.js';
 import MovieCardHOC from '../../Components/MovieCard/MovieCardHOC.js';
 
 import {Link } from 'react-router-dom';

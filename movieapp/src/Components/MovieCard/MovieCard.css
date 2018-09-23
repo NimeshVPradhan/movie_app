@@ -71,6 +71,10 @@
   font-size: 0.7em;
 }
 
+.overflow:hover{
+  white-space: normal;
+}
+
 .details > div > span{
   font-weight: bold;
   font-size: 1em;

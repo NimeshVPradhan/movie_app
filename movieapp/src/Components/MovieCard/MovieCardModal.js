@@ -7,30 +7,11 @@ class MovieCardModal extends Component{
     this.state = {
       cast: [],
       genres: [],
-      keywords: [],
-      showFullCast: false,
-      showFullGenres: false,
-      favorite: false
+      keywords: []
     }
   }
 
-  handleShowFullCast = () => {
-    this.setState({
-      showFullCast : !this.state.showFullCast
-    });
-  }
-
-  handleShowFullGenres = () => {
-    this.setState({
-      showFullGenres : !this.state.showFullGenres
-    });
-  }
-
   handleFavorite = () =>{
-    this.setState({
-      favorite: !this.state.favorite
-    })
-
     this.props.handleFavorite(this.props.movie)
   }
 
@@ -74,12 +55,8 @@ class MovieCardModal extends Component{
                 <div><span>Ratings: </span> {this.props.movie.vote_average}/10</div><hr/>
                 <div><span>Total Votes:</span> {this.props.movie.vote_count}</div><hr/>
                 <div><span>Language: </span> {this.props.movie.original_language}</div><hr/>
-                <div onMouseEnter={this.handleShowFullGenres}
-                     onMouseLeave={this.handleShowFullGenres}
-                     className={this.state.showFullGenres?'':'overflow'}><span>Genres: </span> {this.state.genres.join(', ')}</div><hr/>
-                <div onMouseEnter={this.handleShowFullCast}
-                     onMouseLeave={this.handleShowFullCast}
-                     className={this.state.showFullCast?'':'overflow'}><span>Cast:</span> {this.state.cast.join(', ')}</div><hr/>
+                <div className='overflow'><span>Genres: </span> {this.state.genres.join(', ')}</div><hr/>
+                <div className='overflow'><span>Cast:</span> {this.state.cast.join(', ')}</div><hr/>
                 <div><span>Release date:</span> {this.props.movie.release_date}</div>
               </div>
             </div>
