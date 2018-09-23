@@ -8,6 +8,14 @@ export const initialSetup = () =>{
   return function(dispatch,getState){
     const session = getLocalStorage();
     if(session){
+      const payload = {
+        session : true,
+        user: session.user
+      }
+      dispatch({
+        type: USER_SESSION,
+        payload: payload
+      })
       dispatch(getUserfavorites());
       dispatch(getPopularMovies('popular',1));
     }else{
@@ -179,22 +187,25 @@ export const getFavoriteMovies = (favorites) => {
       if(r.status===200){
         return r.json()
         .then(res=>{
-          console.log('getFavoriteMovies', res);
+          //console.log('getFavoriteMovies', res);
           setLocalStorage(res.token, session.user);
           return({
             favorites: res.data
           })
         }
       )
-    }else{
-      // const payload = {
-      //   session: false,
-      //   user: ''
-      // }
-      // dispatch({
-      //   type: USER_SESSION,
-      //   payload: payload
-      // })
+    }
+
+    return function(dispatch){
+      const payload = {
+        session: false,
+        user: ''
+      }
+      dispatch({
+        type: USER_SESSION,
+        payload: payload
+      })
+
     }
   })
 //}
