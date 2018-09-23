@@ -1,8 +1,8 @@
-import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION} from './types.js';
+import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION, SET_USER_STATE} from './types.js';
 import history from '../history.js';
 
 import generateHeaders from '../Utils/generateHeaders.js';
-import {getLocalStorage, deleteLocalStorage, setLocalStorage} from '../Utils/localStorage.js'
+import {getLocalStorage, deleteLocalStorage, setLocalStorage, setStateToLocalStorage, getStateFromLocalStorage} from '../Utils/localStorage.js'
 
 export const initialSetup = () =>{
   return function(dispatch,getState){
@@ -41,14 +41,7 @@ export const getUserfavorites = () => {
           })
         })
       }else{
-        const payload = {
-          session: false,
-          user: ''
-        }
-        dispatch({
-          type: USER_SESSION,
-          payload: payload
-        })
+        handleLogout();
       }
     })
   }
@@ -78,14 +71,7 @@ export const getPopularMovies = (preference,page) =>{
           })
         })
       }else{
-        const payload = {
-          session: false,
-          user: ''
-        }
-        dispatch({
-          type: USER_SESSION,
-          payload: payload
-        })
+        handleLogout();
       }
     })
   }
@@ -117,30 +103,8 @@ export const handleFavorite = (movie, favorites) =>{
           payload: favorites
         })
       }else{
-        const payload = {
-          session: false,
-          user: ''
-        }
-        dispatch({
-          type: USER_SESSION,
-          payload: payload
-        })
+        handleLogout();
       }
-    })
-  }
-}
-
-
-export const handleLogout = () => {
-  deleteLocalStorage();
-  return function(dispatch){
-    const payload = {
-      session : false,
-      user: ''
-    }
-    dispatch({
-      type: USER_SESSION,
-      payload: payload
     })
   }
 }
@@ -163,22 +127,17 @@ export const updateFavoriteOrder = (favorites) => {
           payload: favorites
         })
       }else{
-        const payload = {
-          session: false,
-          user: ''
-        }
-        dispatch({
-          type: USER_SESSION,
-          payload: payload
-        })
+        handleLogout();
       }
     })
   }
 }
 
-export const getFavoriteMovies = (favorites) => {
-  //return function(dispatch){
-    const session = getLocalStorage();
+export const getFavoriteMovies = () => {
+  const state = getStateFromLocalStorage();
+  const favorites = state.favorites;
+  const session = getLocalStorage();
+  if(session!==null){
     return fetch('/users/'+session.user+'/list?favorites='+favorites,{
       method:'GET',
       headers: generateHeaders()
@@ -187,7 +146,6 @@ export const getFavoriteMovies = (favorites) => {
       if(r.status===200){
         return r.json()
         .then(res=>{
-          //console.log('getFavoriteMovies', res);
           setLocalStorage(res.token, session.user);
           return({
             favorites: res.data
@@ -195,18 +153,55 @@ export const getFavoriteMovies = (favorites) => {
         }
       )
     }
-
-    return function(dispatch){
-      const payload = {
-        session: false,
-        user: ''
-      }
-      dispatch({
-        type: USER_SESSION,
-        payload: payload
-      })
-
-    }
+    handleLogout();
+    return({
+      favorites: []
+    })
   })
-//}
+}else{
+  history.push('/');
+  return new Promise((resolve, reject)=>{
+    reject();
+  });
+
+}
+}
+
+export const setUserStateToProps = () => {
+  return function(dispatch, getState){
+    const state = getStateFromLocalStorage();
+    dispatch({
+      type: SET_USER_STATE,
+      payload: state
+    })
+    return new Promise((resolve, reject)=>{
+      resolve();
+    })
+  }
+}
+
+/*--------------------------Auxiliary functions----------------------*/
+
+
+export const handleLogout = () => {
+  deleteLocalStorage();
+  setStateToLocalStorage();
+
+  return function(dispatch){
+    const payload = {
+      session : false,
+      user: ''
+    }
+    dispatch({
+      type: USER_SESSION,
+      payload: payload
+    })
+  }
+}
+
+export const saveStateToLocalStorage = () => {
+  return function(dispatch, getState){
+    const state = getState();
+    setStateToLocalStorage(state.user);
+  }
 }

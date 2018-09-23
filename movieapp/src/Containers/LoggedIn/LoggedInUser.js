@@ -7,7 +7,7 @@ import {Link } from 'react-router-dom';
 import MovieCardHOC from '../../Components/MovieCard/MovieCardHOC.js';
 
 import {connect} from 'react-redux';
-import {initialSetup, getPopularMovies, handleFavorite, handleLogout} from '../../Actions/loggedInActions.js';
+import {initialSetup, getPopularMovies, handleFavorite, handleLogout, saveStateToLocalStorage} from '../../Actions/loggedInActions.js';
 import {SelectMenu} from '../../Components/m.js';
 import Paginate from '../../Components/Pagination/Paginate.js'
 
@@ -41,6 +41,10 @@ class LoggedInUser extends Component{
     this.props.history.push({
       pathname: '/'
     })
+  }
+
+  componentWillUnmount() {
+    this.props.saveStateToLocalStorage();
   }
 
   render(){
@@ -79,4 +83,4 @@ const mapStateToProps = state => ({
   pageCount: state.user.pageCount
 })
 
-export default connect(mapStateToProps, {initialSetup, getPopularMovies, handleFavorite, handleLogout} )(LoggedInUser);
+export default connect(mapStateToProps, {initialSetup, getPopularMovies, handleFavorite, handleLogout, saveStateToLocalStorage} )(LoggedInUser);

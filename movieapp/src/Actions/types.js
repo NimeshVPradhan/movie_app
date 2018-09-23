@@ -15,6 +15,7 @@ export const USER_LOGIN_ERR = 'USER_LOGIN_ERR';
 
 export const USER_SESSION = 'USER_SESSION';
 export const SESSION_LOGOUT = 'SESSION_LOGOUT';
+export const SET_USER_STATE = 'SET_USER_STATE';
 
 export const USER_REGISTRATION = 'USER_REGISTRATION';
 

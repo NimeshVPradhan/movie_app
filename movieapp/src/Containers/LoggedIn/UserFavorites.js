@@ -8,7 +8,7 @@ import MovieCardModal from '../../Components/MovieCard/MovieCardModal.js';
 import {
   arrayMove,
 } from 'react-sortable-hoc';
-import {updateFavoriteOrder, getFavoriteMovies} from '../../Actions/loggedInActions.js';
+import {updateFavoriteOrder, getFavoriteMovies, setUserStateToProps} from '../../Actions/loggedInActions.js';
 
 
 class UserFavorites extends Component{
@@ -24,13 +24,15 @@ class UserFavorites extends Component{
   }
 
   componentDidMount(){
-    getFavoriteMovies(this.props.favorites)
+    this.props.setUserStateToProps()
+    .then(
+    getFavoriteMovies()
     .then((res)=> {
       this.setState({
         favorites: res.favorites
       })
     })
-
+    .catch(()=>{}))
   }
 
   handleModal = () => {
@@ -108,4 +110,4 @@ const mapStateToProps = state => ({
 })
 
 //export default UserFavorites;
-export default connect(mapStateToProps, {updateFavoriteOrder} )(UserFavorites);
+export default connect(mapStateToProps, {updateFavoriteOrder, setUserStateToProps} )(UserFavorites);
