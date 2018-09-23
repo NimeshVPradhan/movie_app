@@ -8,7 +8,7 @@ import MovieCardModal from '../../Components/MovieCard/MovieCardModal.js';
 import {
   arrayMove,
 } from 'react-sortable-hoc';
-import {updateFavoriteOrder} from '../../Actions/loggedInActions.js';
+import {updateFavoriteOrder, getFavoriteMovies} from '../../Actions/loggedInActions.js';
 
 
 class UserFavorites extends Component{
@@ -24,7 +24,13 @@ class UserFavorites extends Component{
   }
 
   componentDidMount(){
-    this.getFavoriteMovies(this.props.favorites);
+    getFavoriteMovies(this.props.favorites)
+    .then((res)=> {
+      this.setState({
+        favorites: res.favorites
+      })
+    })
+
   }
 
   handleModal = () => {
@@ -33,36 +39,6 @@ class UserFavorites extends Component{
       modalMovie: {}
     })
   }
-
-
-  getFavoriteMovies = (favorites) => {
-    const token = localStorage.getItem('movieapp');
-    fetch('/users/user/list?favorites='+favorites,{
-      method:'GET',
-      headers:{
-        'authorization':'bearer '+token,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(r=> {
-      if(r.status===200){
-        r.json()
-        .then(res=>{
-          localStorage.setItem('movieapp', res.token);
-          this.setState({
-            favorites: res.data
-          })
-        }
-      )
-    }else{
-      this.setState({
-        session: false
-      })
-    }
-  })
-
-}
 
 onSortEnd = ({oldIndex, newIndex}) => {
   const newOrder = arrayMove(this.props.favorites, oldIndex, newIndex);
@@ -100,7 +76,7 @@ render(){
     people
   )
   return (
-    this.state.session?
+    this.props.session?
     <div>
       <Link className='btn btn-outline-primary' path='/' exact="true" to={{
         pathname: '/user'
@@ -117,7 +93,7 @@ render(){
         open={this.state.open} />:''}
     </div>
     :
-    <div className={!this.props.session?'active':'inactive'}>
+    <div>
       <p>session expired</p>
       <button type='button' value='back' onClick={this.handleBack}>back</button>
     </div>
@@ -128,6 +104,7 @@ render(){
 
 const mapStateToProps = state => ({
   favorites: state.user.favorites,
+  session: state.user.session
 })
 
 //export default UserFavorites;

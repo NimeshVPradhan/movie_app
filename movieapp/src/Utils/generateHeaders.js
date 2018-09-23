@@ -1,7 +1,7 @@
 const generateHeaders = () => {
-  const token = localStorage.getItem('movieapp');
+  const session = JSON.parse(localStorage.getItem('movieapp'));
   return {
-    'authorization':'bearer '+token,
+    'authorization':'bearer '+session.token,
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   }

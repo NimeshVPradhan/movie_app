@@ -1,11 +1,15 @@
 const userKey = 'movieapp';
 
 export const getLocalStorage = () => {
-  return localStorage.getItem(userKey);
+  return JSON.parse(localStorage.getItem(userKey));
 }
 
-export const setLocalStorage = (token) => {
-  localStorage.setItem(userKey, token);
+export const setLocalStorage = (token, username) => {
+  const _token = {
+    token: token,
+    user: username
+  }
+  localStorage.setItem(userKey, JSON.stringify(_token));
 }
 
 export const deleteLocalStorage = () => {

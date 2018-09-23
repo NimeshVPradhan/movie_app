@@ -27,7 +27,7 @@ export const registerUser = (username, pw) =>{
               user: result.user
             }
           })
-          setLocalStorage(result.token)
+          setLocalStorage(result.token, result.user._id)
           history.push('./user')
         })
       }

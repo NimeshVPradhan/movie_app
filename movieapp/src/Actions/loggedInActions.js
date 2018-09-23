@@ -4,77 +4,105 @@ import history from '../history.js';
 import generateHeaders from '../Utils/generateHeaders.js';
 import {getLocalStorage, deleteLocalStorage, setLocalStorage} from '../Utils/localStorage.js'
 
-export const initialSetup = (user) =>{
-  return function(dispatch){
+export const initialSetup = () =>{
+  return function(dispatch,getState){
     const session = getLocalStorage();
-    if(session && user){
-      dispatch(getUserfavorites(user));
-      dispatch(getPopularMovies('popular',1,user));
+    if(session){
+      dispatch(getUserfavorites());
+      dispatch(getPopularMovies('popular',1));
     }else{
       history.push('/')
     }
   }
 }
 
-export const getUserfavorites = (username) => {
+export const getUserfavorites = () => {
   return function(dispatch){
-    fetch("/users/"+username+"/favorites",{
+    const session = getLocalStorage();
+    fetch("/users/"+session.user+"/favorites",{
       headers:generateHeaders()
     })
-    .then(r=>r.json())
-    .then(data=>{
-      setLocalStorage(data.token);
-      dispatch({
-        type : GET_FAVOURITE_MOVIES,
-        payload: data.data
-      })
+    .then(r=>{
+      if(r.status===200){
+        r.json()
+        .then(data=>{
+          setLocalStorage(data.token, session.user);
+          dispatch({
+            type : GET_FAVOURITE_MOVIES,
+            payload: data.data
+          })
+        })
+      }else{
+        const payload = {
+          session: false,
+          user: ''
+        }
+        dispatch({
+          type: USER_SESSION,
+          payload: payload
+        })
+      }
     })
   }
 }
 
-export const getPopularMovies = (preference,page, username) =>{
+export const getPopularMovies = (preference,page) =>{
 
   return function (dispatch, getState){
-
+    const session = getLocalStorage();
     fetch("/users/user/type="+preference+"&page="+page,{
       headers:generateHeaders()
     })
-    .then(r=>r.json())
-    .then(data =>{
-      setLocalStorage(data.token);
-      const payload = {
-        movies: data.data.results,
-        currentPage: page,
-        preference: preference,
-        pageCount: data.data.total_pages
+    .then(r=>{
+      if(r.status===200){
+        r.json()
+        .then(data =>{
+          setLocalStorage(data.token,session.user);
+          const payload = {
+            movies: data.data.results,
+            currentPage: page,
+            preference: preference,
+            pageCount: data.data.total_pages
+          }
+          dispatch({
+            type: GET_POPULAR_MOVIES,
+            payload: payload
+          })
+        })
+      }else{
+        const payload = {
+          session: false,
+          user: ''
+        }
+        dispatch({
+          type: USER_SESSION,
+          payload: payload
+        })
       }
-      dispatch({
-        type: GET_POPULAR_MOVIES,
-        payload: payload
-      })
     })
   }
 }
 
 
-export const handleFavorite = (movie, favorites, username) =>{
+export const handleFavorite = (movie, favorites) =>{
 
   return function (dispatch, getState){
+    const session = getLocalStorage();
+
     const state = getState();
     const copy = JSON.parse(JSON.stringify(state));
     var favorites = copy.user.favorites;
     favorites.indexOf(movie.id)>=0?
     favorites.splice(favorites.indexOf(movie.id),1):
     favorites.push(movie.id);
-    //  console.log('use favs',favorites);
-    fetch("/users/"+username+"/favorites",{
+    fetch("/users/"+session.user+"/favorites",{
       headers: generateHeaders(),
       method: 'PUT',
-      body: JSON.stringify( {favorites:favorites, id:username} )
+      body: JSON.stringify( {favorites:favorites, id:session.user} )
     })
     .then(r=>{
       r.json()
-      .then(res=>setLocalStorage(res.token));
+      .then(res=>setLocalStorage(res.token,session.user));
       if(r.status===200){
         dispatch({
           type: UPDATE_FAVOURITE_MOVIES,
@@ -94,21 +122,6 @@ export const handleFavorite = (movie, favorites, username) =>{
   }
 }
 
-export const updateFavoriteOrder = (favorites) => {
-  return function(dispatch,getState){
-    const username = getState().user.user;
-    fetch("/users/"+username+"/favorites",{
-      headers: generateHeaders(),
-      method: 'PUT',
-      body: JSON.stringify( {favorites:favorites, id:username} )
-    })
-
-    dispatch({
-      type: UPDATE_FAVOURITE_MOVIES,
-      payload: favorites
-    })
-  }
-}
 
 export const handleLogout = () => {
   deleteLocalStorage();
@@ -122,4 +135,67 @@ export const handleLogout = () => {
       payload: payload
     })
   }
+}
+
+/*-----------------Favorites page handlers--------------------------------*/
+
+export const updateFavoriteOrder = (favorites) => {
+  return function(dispatch,getState){
+    const session = getLocalStorage();
+
+    fetch("/users/"+session.user+"/favorites",{
+      headers: generateHeaders(),
+      method: 'PUT',
+      body: JSON.stringify( {favorites:favorites, id:session.user} )
+    })
+    .then(r => {
+      if(r.status===200){
+        dispatch({
+          type: UPDATE_FAVOURITE_MOVIES,
+          payload: favorites
+        })
+      }else{
+        const payload = {
+          session: false,
+          user: ''
+        }
+        dispatch({
+          type: USER_SESSION,
+          payload: payload
+        })
+      }
+    })
+  }
+}
+
+export const getFavoriteMovies = (favorites) => {
+  //return function(dispatch){
+    const session = getLocalStorage();
+    return fetch('/users/'+session.user+'/list?favorites='+favorites,{
+      method:'GET',
+      headers: generateHeaders()
+    })
+    .then(r=> {
+      if(r.status===200){
+        return r.json()
+        .then(res=>{
+          console.log('getFavoriteMovies', res);
+          setLocalStorage(res.token, session.user);
+          return({
+            favorites: res.data
+          })
+        }
+      )
+    }else{
+      // const payload = {
+      //   session: false,
+      //   user: ''
+      // }
+      // dispatch({
+      //   type: USER_SESSION,
+      //   payload: payload
+      // })
+    }
+  })
+//}
 }
