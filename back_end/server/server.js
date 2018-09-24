@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const md5 = require('js-md5');
 const jwt = require('jsonwebtoken');
 const fetch = require('isomorphic-fetch');
+const bcrypt = require('bcryptjs');
 
 const OK = 200;
 const CREATED = 201;
@@ -16,6 +16,8 @@ const SERVER_ERROR = 500;
 const NO_CONTENT = 204;
 
 const  token_time = 1*60*1000;
+
+const salt = bcrypt.genSaltSync(10);
 
 const api_key = '24786ae86c770b971c0c4549de40dea7';
 
@@ -130,7 +132,8 @@ const getFavoritelist = (app) => {
       const username = request.params.username;
       const pw = request.body.pw;
       //  console.log(username+'  '+pw);
-      request.app.locals.model.db_ops.newUser(username, pw)
+      const hash = bcrypt.hashSync(pw, salt);
+      request.app.locals.model.db_ops.newUser(username, hash)
       .then((res)=>{
         if(res===username){
           const token = generateToken(res._id, request.app.locals.model.secretKey);
@@ -151,14 +154,21 @@ const getFavoritelist = (app) => {
       const username = request.params.username;
       const pw = request.body.pw;
       //    console.log(username+'  '+pw);
-      request.app.locals.model.db_ops.loginUser(username, pw)
+      request.app.locals.model.db_ops.loginUser(username)
       .then((res)=>{
         if(res){
-          const token = generateToken(res._id);
-          response.status(OK).json({
-            token,
-            user: res
-          });
+          bcrypt.compare(pw, res.pw)
+          .then(valid => {
+            if(valid){
+            const token = generateToken(res._id);
+            response.status(OK).json({
+              token,
+              user: res
+            })
+          }else{
+          response.sendStatus(NOT_FOUND);
+          }
+          })
         }else{
           response.sendStatus(NOT_FOUND);
         }
@@ -240,9 +250,6 @@ const getFavoritelist = (app) => {
         const payload= {
           username: username
         }
-
-        const now = new Date();
-        const expires= 1 ;
 
         const token = jwt.sign(payload, 'key', {
           expiresIn: "1m"

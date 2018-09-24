@@ -24,9 +24,8 @@ DB_ops.prototype.newUser = (username, pw) => {
     })
 }
 
-DB_ops.prototype.loginUser = (username, pw) => {
-  const details = {_id: username,
-                    pw: pw};
+DB_ops.prototype.loginUser = (username) => {
+  const details = {_id: username};
   return users.find(details).toArray()
     .then((user)=>{
       return new Promise((resolve, reject) => {
