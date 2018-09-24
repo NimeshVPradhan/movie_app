@@ -1,4 +1,4 @@
-import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION, SET_USER_STATE} from './types.js';
+import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION, SET_USER_STATE, RESET_USER_STATE} from './types.js';
 import history from '../history.js';
 
 import generateHeaders from '../Utils/generateHeaders.js';
@@ -27,6 +27,7 @@ export const initialSetup = () =>{
 export const getUserfavorites = () => {
   return function(dispatch){
     const session = getLocalStorage();
+    console.log('getUserfavorites session', session);
     fetch("/users/"+session.user+"/favorites",{
       headers:generateHeaders()
     })
@@ -41,7 +42,8 @@ export const getUserfavorites = () => {
           })
         })
       }else{
-        handleLogout();
+        console.log('session exp getUserfavorites');
+        dispatch(handleLogout());
       }
     })
   }
@@ -51,6 +53,8 @@ export const getPopularMovies = (preference,page) =>{
 
   return function (dispatch, getState){
     const session = getLocalStorage();
+    console.log('getPopularMovies session', session);
+
     fetch("/users/user/type="+preference+"&page="+page,{
       headers:generateHeaders()
     })
@@ -71,7 +75,9 @@ export const getPopularMovies = (preference,page) =>{
           })
         })
       }else{
-        handleLogout();
+        console.log('session exp getPopularMovies');
+
+        dispatch(handleLogout());
       }
     })
   }
@@ -103,7 +109,7 @@ export const handleFavorite = (movie, favorites) =>{
           payload: favorites
         })
       }else{
-        handleLogout();
+        dispatch(handleLogout());
       }
     })
   }
@@ -127,54 +133,52 @@ export const updateFavoriteOrder = (favorites) => {
           payload: favorites
         })
       }else{
-        handleLogout();
+        dispatch(handleLogout());
       }
     })
   }
 }
 
 export const getFavoriteMovies = () => {
-  const state = getStateFromLocalStorage();
-  const favorites = state.favorites;
-  const session = getLocalStorage();
-  if(session!==null){
-    return fetch('/users/'+session.user+'/list?favorites='+favorites,{
-      method:'GET',
-      headers: generateHeaders()
-    })
-    .then(r=> {
-      if(r.status===200){
-        return r.json()
-        .then(res=>{
-          setLocalStorage(res.token, session.user);
-          return({
-            favorites: res.data
-          })
+  return function(dispatch){
+    return new Promise((resolve, reject)=>{
+      const state = getStateFromLocalStorage();
+      const favorites = state.favorites;
+      const session = getLocalStorage();
+      if(session!==null){
+        fetch('/users/'+session.user+'/list?favorites='+favorites,{
+          method:'GET',
+          headers: generateHeaders()
+        })
+        .then(r=> {
+          if(r.status===200){
+            r.json()
+            .then(res=>{
+              setLocalStorage(res.token, session.user);
+              resolve({
+                favorites: res.data
+              })
+            }
+          )
+        }else{
+          dispatch(handleLogout());
         }
-      )
+      })
+    }else{
+      history.push('/');
     }
-    handleLogout();
-    return({
-      favorites: []
-    })
   })
-}else{
-  history.push('/');
-  return new Promise((resolve, reject)=>{
-    reject();
-  });
-
 }
 }
 
 export const setUserStateToProps = () => {
-  return function(dispatch, getState){
-    const state = getStateFromLocalStorage();
-    dispatch({
-      type: SET_USER_STATE,
-      payload: state
-    })
-    return new Promise((resolve, reject)=>{
+  return function(dispatch){
+    return new Promise((resolve)=>{
+      const state = getStateFromLocalStorage();
+      dispatch({
+        type: SET_USER_STATE,
+        payload: state
+      })
       resolve();
     })
   }
@@ -186,15 +190,9 @@ export const setUserStateToProps = () => {
 export const handleLogout = () => {
   deleteLocalStorage();
   setStateToLocalStorage();
-
   return function(dispatch){
-    const payload = {
-      session : false,
-      user: ''
-    }
     dispatch({
-      type: USER_SESSION,
-      payload: payload
+      type: RESET_USER_STATE
     })
   }
 }

@@ -1,4 +1,4 @@
-import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION, SESSION_LOGOUT, SET_USER_STATE} from '../Actions/types.js';
+import {GET_POPULAR_MOVIES, UPDATE_FAVOURITE_MOVIES, GET_FAVOURITE_MOVIES, USER_SESSION, SESSION_LOGOUT, SET_USER_STATE, RESET_USER_STATE} from '../Actions/types.js';
 
 const initialState = {
   movies: [],
@@ -45,6 +45,10 @@ export default function(state= initialState, action){
     case SET_USER_STATE:
     return{
       ...action.payload
+    }
+    case RESET_USER_STATE:
+    return{
+      ...initialState
     }
     default:
     return state;

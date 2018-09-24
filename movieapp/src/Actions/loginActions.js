@@ -2,7 +2,7 @@ import {USER_LOGIN_LOADING, USER_LOGIN_SUCCES, USER_LOGIN_ERR, USER_SESSION} fro
 import history from '../history.js';
 
 import generateHeaders from '../Utils/generateHeaders.js';
-import {setLocalStorage} from '../Utils/localStorage.js'
+import {setLocalStorage, getLocalStorage} from '../Utils/localStorage.js';
 
 export const loginUser = (username, pw) => {
   //console.log('login');
@@ -46,3 +46,11 @@ export const loginUser = (username, pw) => {
       })
     }
   }
+
+export const verifyCurrentSession = () => {
+  const session = getLocalStorage();
+  if(session){
+    console.log(session);
+    history.push('./user')
+  }
+}

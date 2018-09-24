@@ -20,6 +20,7 @@ export const registerUser = (username, pw) =>{
       }else if(res.status===201){
         res.json()
         .then(result =>{
+          //console.log(result);
           dispatch({
             type: USER_SESSION,
             payload: {
@@ -27,7 +28,7 @@ export const registerUser = (username, pw) =>{
               user: result.user
             }
           })
-          setLocalStorage(result.token, result.user._id)
+          setLocalStorage(result.token, result.user)
           history.push('./user')
         })
       }

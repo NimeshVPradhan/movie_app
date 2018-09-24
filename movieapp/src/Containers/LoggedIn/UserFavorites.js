@@ -25,14 +25,15 @@ class UserFavorites extends Component{
 
   componentDidMount(){
     this.props.setUserStateToProps()
-    .then(
-    getFavoriteMovies()
+    .then(()=>{
+    this.props.getFavoriteMovies()
     .then((res)=> {
       this.setState({
         favorites: res.favorites
       })
     })
-    .catch(()=>{}))
+    .catch((err)=>{console.log('catch',err)})
+  })
   }
 
   handleModal = () => {
@@ -110,4 +111,4 @@ const mapStateToProps = state => ({
 })
 
 //export default UserFavorites;
-export default connect(mapStateToProps, {updateFavoriteOrder, setUserStateToProps} )(UserFavorites);
+export default connect(mapStateToProps, {updateFavoriteOrder, setUserStateToProps, getFavoriteMovies} )(UserFavorites);

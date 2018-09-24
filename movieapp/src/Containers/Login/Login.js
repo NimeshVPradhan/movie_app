@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Link } from 'react-router-dom';
 
 import {connect} from 'react-redux';
-import {loginUser} from '../../Actions/loginActions.js';
+import {loginUser, verifyCurrentSession} from '../../Actions/loginActions.js';
 
 class Login extends Component{
   constructor(props){
@@ -38,6 +38,10 @@ class Login extends Component{
         err: 'please fill all the fields'
       })
     }
+  }
+
+  componentDidMount(){
+verifyCurrentSession()
   }
 
   render(){
